@@ -21,6 +21,9 @@ function StartScreen() {
         <h1>fdfdfdfd</h1>
         <h1>fdfdfdfd</h1>
         <h1>fxvcghghhh</h1>
+        <h1>fdfdfdfd</h1>
+        <h1>fdfdfdfd</h1>
+        <h1>fxvcghghhh</h1>
         <img
           src={SputnikLogo}
           alt="logo"
