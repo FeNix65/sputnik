@@ -1,6 +1,11 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import StartScreen from './pages/StartScreen';
+import NavigationBar from './components/NavigationBar';
+import Home from './pages/Home';
+import Search from './pages/Search';
+import Settings from './pages/Settings';
+
 
 function App() {
   if (window.Telegram?.WebApp) {
@@ -9,7 +14,14 @@ function App() {
 
     return (
       <AppRoot>
-        <StartScreen />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+          <NavigationBar />
+        </Router>
       </AppRoot>
     );
   }
@@ -30,6 +42,7 @@ export default App;
 // import React from 'react';
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import NavigationBar from './components/NavigationBar';
+// import '@telegram-apps/telegram-ui/dist/styles.css';
 // import Home from './pages/Home';
 // import Search from './pages/Search';
 // import Settings from './pages/Settings';

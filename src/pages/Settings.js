@@ -1,85 +1,59 @@
 import React, { useEffect } from 'react';
 import '../assets/styles/Settings.css';
+import { Section, List, Cell, Input, Avatar} from '@telegram-apps/telegram-ui'; 
+import avatar from '../assets/images/sputnik-logo.png';
+
+import chat from '../assets/images/chat_remove.svg';
+import black_cell from '../assets/images/person_remove_28.svg';
+import safety from '../assets/images/guard_28.svg';
+
+import globe from '../assets/images/globe_28.svg';
+import warning from '../assets/images/warning_28.svg';
+import channel from '../assets/images/channel_28.svg';
+
 
 function Settings() {
-  useEffect(() => {
-    const tg = window.Telegram.WebApp;
-    const theme = tg?.themeParams || {};
-
-    // Устанавливаем цвета в зависимости от темы
-    document.documentElement.style.setProperty('--bg-color', theme.bg_color || '#EFEFF4');
-    document.documentElement.style.setProperty('--text-color', theme.text_color || '#000000');
-    document.documentElement.style.setProperty('--secondary-bg-color', theme.secondary_bg_color || '#ffffff');
-    document.documentElement.style.setProperty('--hint-color', theme.hint_color || '#D9D9D9');
-    document.documentElement.style.setProperty('--button-color', theme.button_color || '#007aff');
-  }, []);
 
   return (
-    <div className="settings-page">
-
-      <div className="profile-section">
-        <div className="profile-header">
-          <img
-            src="https://via.placeholder.com/80"
-            alt="Avatar"
-            className="profile-avatar"
-          />
-          <div className="profile-info">
-            <h2 className="profile-name">Павел Воля</h2>
-            <button className="profile-edit">Редактировать профиль</button>
-          </div>
-        </div>
-        <div className="profile-visibility">
-          <span>Видимость</span>
-          <button className="profile-visibility-status">Виден всем</button>
-        </div>
-      </div>
-
-
-      <h3 className="section-title">Настройки аккаунта</h3>
-      <div className="settings-section">
-
-        <ul className="settings-list">
-          <li className="settings-item">
-            <div className="settings-icon">🔔</div>
-            <span className="settings-text">Уведомления</span>
-          </li>
-          <li className="settings-item">
-            <div className="settings-icon">🚫</div>
-            <span className="settings-text">Черный список</span>
-          </li>
-          <li className="settings-item">
-            <div className="settings-icon">🔒</div>
-            <span className="settings-text">Безопасность</span>
-          </li>
-        </ul>
-        <p className="settings-note">
-          Вы можете привязать дополнительные аккаунты к вашему профилю, чтобы повысить его безопасность.
-        </p>
-      </div>
-
-
-      <h3 className="section-title">Прочая информация</h3>
-      <div className="info-section">
-        
-        <ul className="info-list">
-          <li className="info-item">
-            <div className="info-icon">🌐</div>
-            <span className="info-text">Условия использования</span>
-          </li>
-          <li className="info-item">
-            <div className="info-icon">ℹ️</div>
-            <span className="info-text">Информация о приложении</span>
-          </li>
-          <li className="info-item">
-            <div className="info-icon">📣</div>
-            <span className="info-text">Сообщить о проблеме</span>
-          </li>
-        </ul>
-      </div>
-
-      <footer className="app-footer">Спутник — v1.0.2-beta</footer>
-    </div>
+    <List
+    style={{
+      background: 'var(--tgui--secondary_bg_color)',
+      padding: '36px',
+      // width: 10000,
+      // height: 100
+    }}
+  >
+    <Section>
+      <Cell before={<Avatar size={48} src={avatar} />} subtitle="Редактировать профиль">
+        Name
+      </Cell>
+      <Cell before={<img src={chat} />}  after="Виден всем">
+        Видимость
+      </Cell>
+    </Section>
+    <Section header="настройки аккаунта" footer="Вы можете привязать дополнительные аккаунты к вашему профилю, чтобы повысить его безопасность.">
+      <Cell before={<img src={chat} />}>
+        Уведомления
+      </Cell>
+      <Cell before={<img src={black_cell} />} >
+        Черный список
+      </Cell>
+      <Cell before={<img src={safety} />} >
+        Безопасность
+      </Cell>
+    </Section>
+    <Section header="Прочая информация" footer="Спутник - v1.0.2-beta">
+      <Cell before={<img src={globe} />}>
+        Условия использования
+      </Cell>
+      <Cell before={<img src={warning} />} >
+        Информация о приложении
+      </Cell>
+      <Cell before={<img src={channel} />} >
+        Сообщить о проблеме
+      </Cell>
+    </Section>
+  </List>
   );
 }
 

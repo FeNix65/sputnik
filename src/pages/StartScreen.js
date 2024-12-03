@@ -1,40 +1,46 @@
 import React, { useEffect } from 'react';
 import '../assets/styles/StartScreen.css';
 import SputnikLogo from '../assets/images/sputnik-logo.png';
-import { Button } from '@telegram-apps/telegram-ui';
+import { Placeholder, Button } from '@telegram-apps/telegram-ui';
 
 function StartScreen() {
   const tg = window.Telegram.WebApp;
 
   // Подключаем тему
   useEffect(() => {
-    const theme = tg?.themeParams || {};
-    document.documentElement.style.setProperty('--bg-color', theme.bg_color || '#FFFFFF');
-    document.documentElement.style.setProperty('--text-color', theme.text_color || '#000000');
-    document.documentElement.style.setProperty('--secondary-bg-color', theme.secondary_bg_color || '#F7F8FA');
+    if (tg?.themeParams) {
+      const { bg_color, text_color,  secondary_bg_color} = tg.themeParams;
+      document.documentElement.style.setProperty('--bg-color', bg_color || '#EFEFF4');
+      document.documentElement.style.setProperty('--text-color', text_color || '#000000');
+      document.documentElement.style.setProperty('--secondary-bg-color', secondary_bg_color || '#FFFFFF');
+    }
   }, [tg]);
 
   return (
-    <div className="start-screen">
-      <div className="start-screen-content">
+    <div className="HIJtihMA8FHczS02iWF5">
+      <Placeholder
+        description="Принципиально новый сервис для знакомств в Telegram, нацеленный на создание семейных пар."
+        // style={{
+        //   color: 'var(--text-color)',
+        // }}
+        header="Спутник"
+      >
         <img
+          alt="Telegram sticker"
+          className="sputnik-logo"
           src={SputnikLogo}
-          alt="logo"
-          className="logo"
         />
-        <h1>Спутник</h1>
-        <p>
-          Принципиально новый сервис для знакомств в Telegram, нацеленный на создание семейных пар.
-        </p>
-      </div>
+      </Placeholder>
       <Button
-          size="l"
-          onClick={() => {
-            tg.sendData('profile:create'); // Отправка данных в Telegram WebApp
-          }}
-        >
-          Создать профиль
-        </Button>
+        mode="filled"
+        size="l"
+        stretched
+        style={{
+          color: 'var(--text-color)',
+        }}
+      >
+        Создать профиль
+      </Button>
     </div>
   );
 }
