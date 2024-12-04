@@ -1,17 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppRoot } from '@telegram-apps/telegram-ui';
-import NavigationBar from './components/NavigationBar';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AppRoot } from "@telegram-apps/telegram-ui";
+import NavigationBar from "./components/NavigationBar";
 
-import Ss from './pages/StartScreen';
-import Steps from './components/Steps';
-import Acord from './pages/Education';
-import Btn from './components/CustomButton';
+import Ss from "./pages/StartScreen";
+import Steps from "./components/Steps";
+import Acord from "./pages/Education";
+import Btn from "./components/CustomButton";
+import EndOfRegButton from "./components/EndOfRegButton";
 
-import Home from './pages/Home';
-import Search from './pages/Search';
-import Settings from './pages/Settings';
-
+import Home from "./pages/Home";
+import Search from "./pages/Search";
+import Settings from "./pages/Settings";
+import GeneralInfo from "./pages/GeneralInfo";
+import EducationPage from "./pages/Education";
+import EndOfRegistration from "./pages/EndOfRegistration";
 
 function App() {
   if (window.Telegram?.WebApp) {
@@ -20,19 +23,23 @@ function App() {
 
     return (
       <AppRoot>
-        <Router>
+        {/* <Router>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
           <NavigationBar />
-        </Router>
+        </Router> */}
         {/* <Ss/> */}
-        {/* <Steps />
-        <Acord />
-        <Btn />
-         */}
+        <Steps />
+        {/* <GeneralInfo /> */}
+        {/* <EducationPage/> */}
+        {/* <Acord /> */}
+        {/* <Settings/> */}
+        <EndOfRegistration />
+        {/* <Btn /> */}
+        <EndOfRegButton />
       </AppRoot>
     );
   }
@@ -42,13 +49,9 @@ function App() {
       <h1>Ошибка: Telegram WebApp недоступен</h1>
     </div>
   );
-  
 }
 
 export default App;
-
-
-
 
 // import React from 'react';
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
