@@ -18,8 +18,8 @@ function Settings() {
     <List
     style={{
       background: 'var(--tgui--secondary_bg_color)',
-      padding: '36px',
-      // width: 10000,
+      padding: '15px',
+      // width: '1000vh',
       // height: 100
     }}
   >

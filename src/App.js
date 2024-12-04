@@ -2,6 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import NavigationBar from './components/NavigationBar';
+
+import Ss from './pages/StartScreen';
+import Steps from './components/Steps';
+import Acord from './pages/Education';
+import Btn from './components/CustomButton';
+
 import Home from './pages/Home';
 import Search from './pages/Search';
 import Settings from './pages/Settings';
@@ -22,6 +28,11 @@ function App() {
           </Routes>
           <NavigationBar />
         </Router>
+        {/* <Ss/> */}
+        {/* <Steps />
+        <Acord />
+        <Btn />
+         */}
       </AppRoot>
     );
   }
