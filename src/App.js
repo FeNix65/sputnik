@@ -8,6 +8,7 @@ import Steps from "./components/Steps";
 import Acord from "./pages/Education";
 import Btn from "./components/CustomButton";
 import EndOfRegButton from "./components/EndOfRegButton";
+import SubRegButton from "./components/SubRegButton";
 
 import Home from "./pages/Home";
 import Search from "./pages/Search";
@@ -15,6 +16,7 @@ import Settings from "./pages/Settings";
 import GeneralInfo from "./pages/GeneralInfo";
 import EducationPage from "./pages/Education";
 import EndOfRegistration from "./pages/EndOfRegistration";
+import PersonalLife from "./pages/PersonLife";
 
 function App() {
   if (window.Telegram?.WebApp) {
@@ -32,14 +34,16 @@ function App() {
           <NavigationBar />
         </Router> */}
         {/* <Ss/> */}
-        <Steps />
+        {/* <Steps /> */}
+        <PersonalLife />
         {/* <GeneralInfo /> */}
         {/* <EducationPage/> */}
         {/* <Acord /> */}
         {/* <Settings/> */}
-        <EndOfRegistration />
+        {/* <EndOfRegistration /> */}
         {/* <Btn /> */}
-        <EndOfRegButton />
+        <SubRegButton />
+        {/* <EndOfRegButton /> */}
       </AppRoot>
     );
   }
