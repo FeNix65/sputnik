@@ -5,9 +5,9 @@ const EducationPage = () => {
     return (
         <List
   style={{
-    background: 'var(--tgui--secondary_bg_color)',
-    padding: '15px',
-    height: 600
+    // background: 'var(--tgui--secondary_bg_color)',
+    // padding: '15px',
+    // height: 600
     // width: 500
   }}
 >
