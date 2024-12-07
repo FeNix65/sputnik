@@ -4,7 +4,6 @@
     gap: 10px; 
 }
 
-<<<<<<< HEAD
 /* .gender__item{
     align-items: center; 
     justify-content: center;
@@ -14,14 +13,3 @@
 /* .firstSelect{
     margin-top: 24px;
 } */
-=======
-.gender__item{
-    align-items: center; 
-    justify-content: center;
-    display: flex;
-}
-
-.firstSelect{
-    margin-top: 24px;
-}
->>>>>>> 5b87f52ad866a78a75c53b5ea72824e4677386e0
