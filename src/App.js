@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppRoot } from "@telegram-apps/telegram-ui";
 import NavigationBar from "./components/NavigationBar";
 
-import Ss from "./pages/StartScreen";
+import StartScreen from "./pages/StartScreen";
 import Steps from "./components/Steps";
 import Acord from "./pages/Education";
 import Btn from "./components/CustomButton";
@@ -16,7 +16,6 @@ import Settings from "./pages/Settings";
 import GeneralInfo from "./pages/GeneralInfo";
 import EducationPage from "./pages/Education";
 import EndOfRegistration from "./pages/EndOfRegistration";
-import PersonalLife from "./pages/PersonLife";
 
 function App() {
   if (window.Telegram?.WebApp) {
@@ -24,7 +23,13 @@ function App() {
     tg.ready();
 
     return (
-      <AppRoot>
+      <AppRoot
+        style={{
+          background: "var(--tgui--secondary_bg_color)",
+          width: "100vw",
+          height: "100vh",
+        }}
+      >
         {/* <Router>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -34,16 +39,14 @@ function App() {
           <NavigationBar />
         </Router> */}
         {/* <Ss/> */}
-        {/* <Steps /> */}
-        <PersonalLife />
+        <Steps />
         {/* <GeneralInfo /> */}
         {/* <EducationPage/> */}
         {/* <Acord /> */}
         {/* <Settings/> */}
-        {/* <EndOfRegistration /> */}
+        <EndOfRegistration />
         {/* <Btn /> */}
-        <SubRegButton />
-        {/* <EndOfRegButton /> */}
+        <EndOfRegButton />
       </AppRoot>
     );
   }

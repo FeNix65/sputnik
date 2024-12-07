@@ -1,11 +1,13 @@
 import React from "react";
-import { Button } from "@telegram-apps/telegram-ui";
+import { Button, List } from "@telegram-apps/telegram-ui";
 
 const EndOfRegButton = () => {
   return (
-    <Button size="l" style={{ width: "48vh", margin: "16px" }}>
-      Завершение регистрации
-    </Button>
+    <List style={{ position: "absolute", bottom: "35px", left: "16px", right: "16px"}}>
+      <Button size="l" style={{ width: "97vw" }}>
+        Завершение регистрации
+      </Button>
+    </List>
   );
 };
 

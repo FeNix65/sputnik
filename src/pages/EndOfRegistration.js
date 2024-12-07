@@ -6,16 +6,16 @@ const EndOfRegistration = () => {
   return (
     <List
       style={{
-        background: "var(--tgui--secondary_bg_color)",
-        padding: "15px",
-        height: 400,
+        // background: "var(--tgui--secondary_bg_color)",
+        // padding: "15px",
+        // height: 400,
       }}
     >
       <Headline level="1" weight="1">
         Фотография анкеты
       </Headline>
-      <Section>
-        <FileInput
+      <Section >
+        <FileInput style={{ padding: "0 !important"}}
           label="Прикрепить фото"
           multiple
           onChange={function noRefCheck() {}}

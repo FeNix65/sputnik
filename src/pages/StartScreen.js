@@ -18,38 +18,38 @@ function StartScreen() {
 
   return (
     <List>
-<Section >
-      <Placeholder
+      <Section >
+        <Placeholder
+          style={{
+            height: 620
+            // width: 500
+          }}
+          description="Принципиально новый сервис для знакомств в Telegram, нацеленный на создание семейных пар."
+          // style={{
+          //   color: 'var(--text-color)',
+          // }}
+          header="Спутник"
+        >
+          <img
+            alt="Telegram sticker"
+            className="sputnik-logo"
+            src={SputnikLogo}
+          />
+        </Placeholder>
+        </Section>
+        <Section 
         style={{
-          height: 600
-          // width: 500
+          position: "absolute", bottom: "35px", left: "16px", right: "16px"
         }}
-        description="Принципиально новый сервис для знакомств в Telegram, нацеленный на создание семейных пар."
-        // style={{
-        //   color: 'var(--text-color)',
-        // }}
-        header="Спутник"
-      >
-        <img
-          alt="Telegram sticker"
-          className="sputnik-logo"
-          src={SputnikLogo}
-        />
-      </Placeholder>
-      </Section>
-      <Section 
-      style={{
-        // color: 'var(--text-color)',
-        marginTop: '15px'
-      }}
-      >
-      <Button
-        mode="filled"
-        size="l"
-        stretched
-      >
-        Создать профиль
-      </Button>
+        >
+        <Button
+          mode="filled"
+          size="l"
+          stretched
+          style={{ width: "97vw" }}
+        >
+          Создать профиль
+        </Button>
       </Section>
     </List>
   );

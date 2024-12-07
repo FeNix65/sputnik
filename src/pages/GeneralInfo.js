@@ -19,9 +19,9 @@ const GeneralInfo = () => {
   return (
     <List
       style={{
-        background: "var(--tgui--secondary_bg_color)",
-        padding: "15px",
-        height: 600,
+        // background: "var(--tgui--secondary_bg_color)",
+        // padding: "15px",
+        // height: 600,
       }}
     >
       <Headline level="1" weight="1">
@@ -32,7 +32,6 @@ const GeneralInfo = () => {
         <Textarea placeholder="Напишите о себе..." />
       </Section>
       <Select
-        header="Select"
         placeholder="I am usual input, just leave me alone"
         className="firstSelect"
       >
@@ -40,7 +39,6 @@ const GeneralInfo = () => {
         <option>Okay</option>
       </Select>
       <Select
-        header="Select"
         placeholder="I am usual input, just leave me alone"
       >
         <option>Город проживания</option>

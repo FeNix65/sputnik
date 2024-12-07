@@ -17,10 +17,10 @@ function Settings() {
   return (
     <List
     style={{
-      background: 'var(--tgui--secondary_bg_color)',
-      padding: '15px',
+      // background: 'var(--tgui--secondary_bg_color)',
+      // padding: '15px',
       // width: '1000vh',
-      // height: 100
+      // height: "100vh"
     }}
   >
     <Section>
