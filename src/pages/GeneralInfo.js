@@ -19,9 +19,15 @@ const GeneralInfo = () => {
   return (
     <List
       style={{
+<<<<<<< HEAD
         // background: "var(--tgui--secondary_bg_color)",
         // padding: "15px",
         // height: 600,
+=======
+        background: "var(--tgui--secondary_bg_color)",
+        padding: "15px",
+        height: 600,
+>>>>>>> 5b87f52ad866a78a75c53b5ea72824e4677386e0
       }}
     >
       <Headline level="1" weight="1">
@@ -32,6 +38,10 @@ const GeneralInfo = () => {
         <Textarea placeholder="Напишите о себе..." />
       </Section>
       <Select
+<<<<<<< HEAD
+=======
+        header="Select"
+>>>>>>> 5b87f52ad866a78a75c53b5ea72824e4677386e0
         placeholder="I am usual input, just leave me alone"
         className="firstSelect"
       >
@@ -39,6 +49,10 @@ const GeneralInfo = () => {
         <option>Okay</option>
       </Select>
       <Select
+<<<<<<< HEAD
+=======
+        header="Select"
+>>>>>>> 5b87f52ad866a78a75c53b5ea72824e4677386e0
         placeholder="I am usual input, just leave me alone"
       >
         <option>Город проживания</option>
