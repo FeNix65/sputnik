@@ -8,6 +8,7 @@ import Steps from "./components/Steps";
 import Acord from "./pages/Education";
 import Btn from "./components/CustomButton";
 import EndOfRegButton from "./components/EndOfRegButton";
+import SubRegButton from "./components/SubRegButton";
 
 import Home from "./pages/Home";
 import Search from "./pages/Search";
@@ -15,7 +16,10 @@ import Settings from "./pages/Settings";
 import GeneralInfo from "./pages/GeneralInfo";
 import EducationPage from "./pages/Education";
 import EndOfRegistration from "./pages/EndOfRegistration";
-import Habitation from "./pages/Habitation";
+import PersonLife from "./pages/PersonLife";
+import Habitation from "./pages/Habitation"
+import ExternalFeatures from "./pages/ExternalFeatures"
+import Preferences from "./pages/Preferences"
 
 function App() {
   if (window.Telegram?.WebApp) {
@@ -23,7 +27,13 @@ function App() {
     tg.ready();
 
     return (
-      <AppRoot style={{ background: 'var(--tgui--secondary_bg_color)', width: "100vw", height:"100vh",}}>
+      <AppRoot
+        style={{
+          background: "var(--tgui--secondary_bg_color)",
+          width: "100vw",
+          height: "100vh",
+        }}
+      >
         {/* <Router>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -32,16 +42,19 @@ function App() {
           </Routes>
           <NavigationBar />
         </Router> */}
-        {/* <StartScreen/> */}
-        {/* <Steps /> */}
+        {/* <Ss/> */}
+        <Steps />
         {/* <GeneralInfo /> */}
         {/* <EducationPage/> */}
         {/* <Acord /> */}
         {/* <Settings/> */}
-        <Habitation />
-        <Btn />
-        {/* <EndOfRegistration />
-        <EndOfRegButton /> */}
+        {/* <EndOfRegistration /> */}
+        {/* <PersonLife />  */}
+        {/* <Habitation /> */}
+        {/* <ExternalFeatures /> */}
+        <Preferences /> 
+        {/* <Btn /> */}
+        {/* <EndOfRegButton /> */}
       </AppRoot>
     );
   }
