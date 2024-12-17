@@ -46,6 +46,46 @@ const PersonalLife = () => {
           </Cell>
         </Section>
       </form>
+
+      <Section header="БЫЛИ ЛИ У ВАС ПОЛОВЫЕ ОТНОШЕНИЯ"></Section>
+      <form className="sexrelationships">
+        <Section>
+          <Cell
+            className="sexrelationships__item"
+            before={<Radio name="radio" value="NO" />}
+          >
+            Нет
+          </Cell>
+        </Section>
+        <Section>
+          <Cell
+            className="relationships__item"
+            before={<Radio name="radio" value="YES" />}
+          >
+            Да
+          </Cell>
+        </Section>
+      </form>
+
+      <Section header="БЫЛИ ЛИ ВЫ ЗАМУЖЕМ?"></Section>
+      <form className="married">
+        <Section>
+          <Cell
+            className="married__item"
+            before={<Radio name="radio" value="NO" />}
+          >
+            Нет
+          </Cell>
+        </Section>
+        <Section>
+          <Cell
+            className="relationships__item"
+            before={<Radio name="radio" value="YES" />}
+          >
+            Да
+          </Cell>
+        </Section>
+      </form>
     </List>
   );
 };

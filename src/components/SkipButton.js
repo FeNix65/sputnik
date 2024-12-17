@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, List } from "@telegram-apps/telegram-ui";
+import "../assets/styles/CustomButton.css"; // Импорт файла стилей
 
-const SubRegButton = () => {
+const SkipButton = () => {
   return (
     <List
       style={{
@@ -12,10 +13,10 @@ const SubRegButton = () => {
       }}
     >
       <Button size="l" style={{ width: "97vw" }}>
-        Сохранить
+        Продолжить
       </Button>
     </List>
   );
 };
 
-export default SubRegButton;
+export default SkipButton;

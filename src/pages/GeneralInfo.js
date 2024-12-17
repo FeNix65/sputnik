@@ -16,31 +16,33 @@ import {
 import "../assets/styles/GeneralInfo.css";
 
 const GeneralInfo = () => {
+  const [birthDate, setBirthDate] = useState("");
+  const [city, setCity] = useState("");
+  const [gender, setGender] = useState("");
   return (
     <List
-      style={{
-        // background: "var(--tgui--secondary_bg_color)",
-        // padding: "15px",
-        // height: 600,
-      }}
+      style={
+        {
+          // background: "var(--tgui--secondary_bg_color)",
+          // padding: "15px",
+          // height: 600,
+        }
+      }
     >
-      <Headline level="1" weight="1">
-        Общая информация
-      </Headline>
-      <Input placeholder="Имя" />
-      <Section footer="Например: Музыкант, играю на нервах бывшей. Ищу себе девушку для ролевых игр.">
-        <Textarea placeholder="Напишите о себе..." />
+      <Section
+        header="Общая информация"
+        footer="Например: Музыкант, играю на нервах бывшей. Ищу себе девушку для ролевых игр."
+      >
+        <Input placeholder="Имя" />
+        <Input placeholder="Напишите о себе..." />
       </Section>
-      <Select
-        placeholder="I am usual input, just leave me alone"
-        className="firstSelect"
-      >
-        <option>Дата рождения</option>
-        <option>Okay</option>
-      </Select>
-      <Select
-        placeholder="I am usual input, just leave me alone"
-      >
+      <Section>
+        <Select>
+          <option>Дата рождения</option>
+          <option>Okay</option>
+        </Select>
+      </Section>
+      <Select>
         <option>Город проживания</option>
         <option>Okay</option>
       </Select>

@@ -9,6 +9,7 @@ import Acord from "./pages/Education";
 import Btn from "./components/CustomButton";
 import EndOfRegButton from "./components/EndOfRegButton";
 import SubRegButton from "./components/SubRegButton";
+import SkipButton from "./components/SkipButton";
 
 import Home from "./pages/Home";
 import Search from "./pages/Search";
@@ -16,6 +17,11 @@ import Settings from "./pages/Settings";
 import GeneralInfo from "./pages/GeneralInfo";
 import EducationPage from "./pages/Education";
 import EndOfRegistration from "./pages/EndOfRegistration";
+import Habitation from "./pages/Habitation";
+import PersonalLife from "./pages/PersonLife";
+import Preferences from "./pages/Preferences";
+import Family from "./pages/Family";
+import ExternalFeatures from "./pages/ExternalFeatures";
 
 function App() {
   if (window.Telegram?.WebApp) {
@@ -39,14 +45,29 @@ function App() {
           <NavigationBar />
         </Router> */}
         {/* <Ss/> */}
-        <Steps />
-        {/* <GeneralInfo /> */}
-        {/* <EducationPage/> */}
-        {/* <Acord /> */}
-        {/* <Settings/> */}
-        <EndOfRegistration />
-        {/* <Btn /> */}
-        <EndOfRegButton />
+
+        {/* компоненты верха страницы */}
+        {/* <Settings /> */}
+
+        {/* <Steps /> */}
+
+        {/* сами страницы */}
+        {/* <StartScreen/> */}
+        <GeneralInfo />
+        {/* <EducationPage /> */}
+        {/* <ExternalFeatures /> */}
+        {/* <EndOfRegistration /> */}
+        {/* <PersonalLife /> */}
+        {/* <Family /> */}
+        {/* <Habitation /> */}
+        {/* <Preferences /> */}
+        {/* < Анкеты сюда/> */}
+
+        {/* Компоненты низа страницы */}
+
+        <Btn />
+        {/* <EndOfRegButton /> */}
+        <SubRegButton />
       </AppRoot>
     );
   }
