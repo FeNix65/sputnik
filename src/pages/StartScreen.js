@@ -42,14 +42,6 @@ function StartScreen() {
           position: "absolute", bottom: "35px", left: "16px", right: "16px"
         }}
         >
-        <Button
-          mode="filled"
-          size="l"
-          stretched
-          style={{ width: "97vw" }}
-        >
-          Создать профиль
-        </Button>
       </Section>
     </List>
   );

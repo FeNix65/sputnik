@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Steps } from '@telegram-apps/telegram-ui';
 
-const StepsPanel = () => {
-    return (
+const StepsPanel = ({ progress }) => {
+  return (
     <Steps
-        count={4}
-        progress={2}
+      count={4} // Количество шагов
+      progress={progress} // Текущий шаг
     />
-    )
-}
+  );
+};
 
 export default StepsPanel;
