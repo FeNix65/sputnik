@@ -72,6 +72,42 @@ const PersonalLife = () => {
             Да
           </Cell>
         </Section>
+        <Section header="БЫЛИ ЛИ У ВАС ОТНОШЕНИЯ"></Section>
+      <form className="relationships">
+        <Section>
+          <Cell
+            className="relationships__item"
+            before={<Radio name="radio" value="NO" />}
+          >
+            Нет
+          </Cell>
+        </Section>
+        <Section>
+          <Cell
+            className="relationships__item"
+            before={<Radio name="radio" value="YES" />}
+          >
+            Да
+          </Cell>
+        </Section>
+        <Section header="БЫЛИ ЛИ У ВАС ПОЛОВЫЕ ОТНОШЕНИЯ"></Section>
+      <form className="relationships">
+        <Section>
+          <Cell
+            className="relationships__item"
+            before={<Radio name="radio" value="NO" />}
+          >
+            Нет
+          </Cell>
+        </Section>
+        <Section>
+          <Cell
+            className="relationships__item"
+            before={<Radio name="radio" value="YES" />}
+          >
+            Да
+          </Cell>
+        </Section>
       </form>
       <Section header="Колличество детей">
         <Slider step={32} multiple />

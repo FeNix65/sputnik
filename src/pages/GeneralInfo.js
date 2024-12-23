@@ -10,7 +10,6 @@ import {
   Divider
 } from "@telegram-apps/telegram-ui";
 
-<<<<<<< HEAD
 const GeneralInfo = ({ onSendData }) => {
   const [firstName, setFirstName] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -113,58 +112,6 @@ const GeneralInfo = ({ onSendData }) => {
       <Button onClick={() => onSendData(prepareData())}>
         Тестовая отправка
       </Button>
-=======
-const GeneralInfo = () => {
-  const [birthDate, setBirthDate] = useState("");
-  const [city, setCity] = useState("");
-  const [gender, setGender] = useState("");
-  return (
-    <List
-      style={
-        {
-          // background: "var(--tgui--secondary_bg_color)",
-          // padding: "15px",
-          // height: 600,
-        }
-      }
-    >
-      <Section
-        header="Общая информация"
-        footer="Например: Музыкант, играю на нервах бывшей. Ищу себе девушку для ролевых игр."
-      >
-        <Input placeholder="Имя" />
-        <Input placeholder="Напишите о себе..." />
-      </Section>
-      <Section>
-        <Select>
-          <option>Дата рождения</option>
-          <option>Okay</option>
-        </Select>
-      </Section>
-      <Select>
-        <option>Город проживания</option>
-        <option>Okay</option>
-      </Select>
-      <Section header=" ВЫБЕРИТЕ ВАШ ПОЛ"></Section>
-      <form className="gender">
-        <Section>
-          <Cell
-            className="gender__item"
-            before={<Radio name="radio" value="male" />}
-          >
-            Мужской
-          </Cell>
-        </Section>
-        <Section>
-          <Cell
-            className="gender__item"
-            before={<Radio name="radio" value="female" />}
-          >
-            Женский
-          </Cell>
-        </Section>
-      </form>
->>>>>>> 51ba4a7a40b123bcc0b7653b75c500c6277855c9
     </List>
   );
 };
