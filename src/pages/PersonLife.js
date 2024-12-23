@@ -73,7 +73,7 @@ const PersonalLife = () => {
           </Cell>
         </Section>
         </form>
-        <Section header="БЫЛИ ЛИ У ВАС ОТНОШЕНИЯ"></Section>
+        <Section header="БЫЛИ ЛИ У ВАС ПОЛОВЫЕ ОТНОШЕНИЯ"></Section>
       <form className="relationships">
         <Section>
           <Cell
@@ -92,7 +92,7 @@ const PersonalLife = () => {
           </Cell>
         </Section>
         </form>
-        <Section header="БЫЛИ ЛИ У ВАС ПОЛОЖ ОТНОШЕНИЯ"></Section>
+        <Section header="БЫЛИ ЛИ ВЫ ЗАМУЖЕМ"></Section>
       <form className="relationships">
         <Section>
           <Cell
