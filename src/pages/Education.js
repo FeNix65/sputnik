@@ -3,14 +3,7 @@ import { Accordion, Subheadline, List, Section, Multiselect, Input} from '@teleg
 
 const EducationPage = () => {
     return (
-        <List
-  style={{
-    // background: 'var(--tgui--secondary_bg_color)',
-    // padding: '15px',
-    // height: 600
-    // width: 500
-  }}
->
+        <List>
     <Section header="Специализация">
         <Accordion
         
@@ -31,8 +24,7 @@ const EducationPage = () => {
         </Subheadline>
         </Accordion.Content>
       </Accordion>
-      </Section>
-    <Section>
+     
         <Accordion
             id="ddd"
             onChange={function noRefCheck(){}}

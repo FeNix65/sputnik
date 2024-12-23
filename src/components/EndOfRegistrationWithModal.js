@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Placeholder } from "@telegram-apps/telegram-ui";
-
-import PersonLife from "../pages/PersonLife";
-import Habitation from "../pages/Habitation";
-import Preferences from "../pages/Preferences";
-import Family from "../pages/Family";
+import { Modal, Placeholder, Section, Cell } from "@telegram-apps/telegram-ui";
+import { useNavigate } from "react-router-dom";
 
 const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const navigate = useNavigate();
   const tg = window.Telegram?.WebApp;
 
   const pages = [
-    { title: "Семья", component: <Placeholder header="Семья" description="Семейные сведения" /> },
-    { title: "Личная жизнь", component: <PersonLife /> },
-    { title: "Семья", component: <Family/> },
-    { title: "Проживание", component: <Habitation /> },
-    { title: "Предпочтения", component: <Preferences /> },
+    { title: "Личная жизнь", path: "/person-life" },
+    { title: "Семья", path: "/family" },
+    { title: "Проживание", path: "/habitation" },
+    { title: "Предпочтения", path: "/preferences" },
   ];
-
-  const nextPage = () => {
-    setCurrentStep((prev) => (prev < pages.length - 1 ? prev + 1 : prev));
-  };
 
   useEffect(() => {
     if (tg) {
@@ -28,12 +20,8 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
       tg.MainButton.show();
 
       const handleMainButtonClick = () => {
-        if (currentStep < pages.length - 1) {
-          nextPage();
-        } else {
-          tg.MainButton.hide();
-          closeModal();
-        }
+        tg.MainButton.hide();
+        closeModal();
       };
 
       tg.MainButton.onClick(handleMainButtonClick);
@@ -43,17 +31,21 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
         tg.MainButton.hide();
       };
     }
-  }, [currentStep, tg, closeModal]);
+  }, [tg, closeModal]);
 
   return (
     <Modal
-      header={<Modal.Header>{pages[currentStep].title}</Modal.Header>}
+      header={<Modal.Header>Дополнительная информация</Modal.Header>}
       onClose={closeModal}
       open={isModalOpen}
     >
-      <div style={{ padding: "20px" }}>
-        {pages[currentStep].component}
-      </div>
+      <Section footer="Нажмите на пункт, чтобы открыть соответствующую страницу.">
+        {pages.map((page, index) => (
+          <Cell key={index} onClick={() => navigate(page.path)}>
+            {page.title}
+          </Cell>
+        ))}
+      </Section>
     </Modal>
   );
 };

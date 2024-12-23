@@ -6,15 +6,11 @@ import "../assets/styles/ExternalFeatures.css";
 const ExternalFeatures = () => {
     return (
         <List>
-            <form header="Внешность">
-                <Section>
+            <Section header="Внешность"  footer="Данная информация не является обязательной.">
+                <form className='form-section'>
                     <Input placeholder="Рост" />
-                </Section>
-                <Section>
-                 <Input placeholder="Вес" />
-                </Section>
-            </form>
-            <Section footer="Данная информация не является обязательной.">
+                    <Input placeholder="Вес" />
+                </form>
                 <Select placeholder="Телосложение">
                     <option>Телосложение</option>
                     <option>Okay</option>
@@ -27,7 +23,7 @@ const ExternalFeatures = () => {
                 <Multiselect sectionHeader="вредные привычки" />
             </Section> 
             <Section header="Прочая информация" footer="Например: Лазерная коррекция зрения, ношу лизны">
-                <Textarea placeholder="Перенесенные операции и прочая информация." />
+                <Input placeholder="Перенесенные операции и прочая информация." />
             </Section>
         </List>
 

@@ -9,6 +9,10 @@ import ExternalFeatures from "./pages/ExternalFeatures";
 import EndOfRegistration from "./pages/EndOfRegistration";
 import EndOfRegistrationWithModal from "./components/EndOfRegistrationWithModal";
 import StepsPanel from "./components/Steps";
+import PersonLife from "./pages/PersonLife";
+import Habitation from "./pages/Habitation";
+import Preferences from "./pages/Preferences";
+import Family from "./pages/Family";
 
 function App() {
   const tg = window.Telegram?.WebApp;
@@ -34,6 +38,11 @@ function App() {
           <Route path="/education" element={<PageWithSteps page="education" />} />
           <Route path="/external-features" element={<PageWithSteps page="external-features" />} />
           <Route path="/end-of-registration" element={<PageWithSteps page="end-of-registration" />} />
+          <Route path="/person-life" element={<PageWithSteps page="person-life" />} />
+          <Route path="/family" element={<PageWithSteps page="family" />} />
+          <Route path="/habitation" element={<PageWithSteps page="habitation" />} />
+          <Route path="/preferences" element={<PageWithSteps page="preferences" />} />
+          
           <Route
             path="/modal"
             element={
@@ -63,6 +72,10 @@ const PageWithSteps = ({ page }) => {
       {page === "education" && <EducationPage />}
       {page === "external-features" && <ExternalFeatures />}
       {page === "end-of-registration" && <EndOfRegistration />}
+      {page === "person-life" && <PersonLife />}
+      {page === "family" && <Family />}
+      {page === "habitation" && <Habitation />}
+      {page === "preferences" && <Preferences />}
     </div>
   );
 };
@@ -90,10 +103,22 @@ const TelegramNavButton = ({ openModal }) => {
             navigate("/end-of-registration");
             break;
           case "/end-of-registration":
-            navigate("/modal");// Открываем модал
+            navigate("/person-life");
             break;
-          case "/modal":
-            openModal(); // Открываем модал
+          case "/person-life":
+            navigate("/family");
+            break;
+          case "/family":
+            navigate("/habitation");
+            break;
+          case "/habitation":
+            navigate("/preferences");
+            break;
+          case "/preferences":
+            navigate("/modal");
+            break;
+            case "/modal":
+            openModal("/modal");
             break;
           default:
             tg.MainButton.hide();
@@ -115,8 +140,20 @@ const TelegramNavButton = ({ openModal }) => {
           case "/end-of-registration":
             tg.MainButton.text = "Завершить регистрацию";
             break;
-          case "/modal":
+          case "/person-life":
             tg.MainButton.text = "Сохранить";
+            break;
+          case "/habitation":
+            tg.MainButton.text = "Сохранить";
+            break;
+          case "/preferences":
+            tg.MainButton.text = "Сохранить";
+            break;
+          case "/family":
+            tg.MainButton.text = "Сохранить";
+            break;
+          case "/modal":
+            tg.MainButton.text = "Пропустить";
             break;
           default:
             tg.MainButton.text = "Продолжить";
