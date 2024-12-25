@@ -14,6 +14,7 @@ import Habitation from "./pages/Habitation";
 import Preferences from "./pages/Preferences";
 import Family from "./pages/Family";
 
+// Основной компонент приложения
 function App() {
   const tg = window.Telegram?.WebApp;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,8 +74,8 @@ const PageWithSteps = ({ page }) => {
     <div>
       <StepsPanel progress={stepsMapping[page]} />
       {page === "general-info" && <GeneralInfo />}
-      {page === "education" && <EducationPage onSubmit={handleSubmit}/>}
-      {page === "external-features" && <ExternalFeatures />}
+      {page === "education" && <EducationPage onSubmit={handleSubmit} />}
+      {page === "external-features" && <ExternalFeatures onSubmit={handleSubmit} />}
       {page === "end-of-registration" && <EndOfRegistration />}
       {page === "person-life" && <PersonLife />}
       {page === "family" && <Family />}
@@ -102,28 +103,18 @@ const TelegramNavButton = ({ openModal }) => {
             break;
           case "/education":
             const event = new CustomEvent("education-submit");
-            window.dispatchEvent(event); 
+            window.dispatchEvent(event);
             navigate("/external-features");
             break;
           case "/external-features":
+            const events = new CustomEvent("external-features-submit");
+            window.dispatchEvent(events);
             navigate("/end-of-registration");
             break;
           case "/end-of-registration":
-            navigate("/person-life");
-            break;
-          case "/person-life":
-            navigate("/family");
-            break;
-          case "/family":
-            navigate("/habitation");
-            break;
-          case "/habitation":
-            navigate("/preferences");
-            break;
-          case "/preferences":
             navigate("/modal");
             break;
-            case "/modal":
+          case "/modal":
             openModal("/modal");
             break;
           default:
@@ -173,107 +164,5 @@ const TelegramNavButton = ({ openModal }) => {
 
   return null;
 };
+
 export default App;
-
-
-
-
-
-
-  // import React from "react";
-  // import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-  // import { AppRoot } from "@telegram-apps/telegram-ui";
-  // import NavigationBar from "./components/NavigationBar";
-
-  // import StartScreen from "./pages/StartScreen";
-  // import Steps from "./components/Steps";
-  // import Acord from "./pages/Education";
-  // import Btn from "./components/CustomButton";
-  // import EndOfRegButton from "./components/EndOfRegButton";
-  // import SubRegButton from "./components/SubRegButton";
-
-  // import Home from "./pages/Home";
-  // import Search from "./pages/Search";
-  // import Settings from "./pages/Settings";
-  // import GeneralInfo from "./pages/GeneralInfo";
-  // import EducationPage from "./pages/Education";
-  // import EndOfRegistration from "./pages/EndOfRegistration";
-  // import PersonLife from "./pages/PersonLife";
-  // import Habitation from "./pages/Habitation"
-  // import ExternalFeatures from "./pages/ExternalFeatures"
-  // import Preferences from "./pages/Preferences"
-
-  // function App() {
-  //   if (window.Telegram?.WebApp) {
-  //     const tg = window.Telegram.WebApp;
-  //     tg.ready();
-
-  //     return (
-  //       <AppRoot
-  //         style={{
-  //           background: "var(--tgui--secondary_bg_color)",
-  //           width: "100vw",
-  //           height: "100vh",
-  //         }}
-  //       >
-  //         {/* <Router>
-  //           <Routes>
-  //             <Route path="/" element={<Home />} />
-  //             <Route path="/search" element={<Search />} />
-  //             <Route path="/settings" element={<Settings />} />
-  //           </Routes>
-  //           <NavigationBar />
-  //         </Router> */}
-  //         {/* <Ss/> */}
-  //         <Steps />
-  //         {/* <GeneralInfo /> */}
-  //         {/* <EducationPage/> */}
-  //         {/* <Acord /> */}
-  //         {/* <Settings/> */}
-  //         {/* <EndOfRegistration /> */}
-  //         {/* <PersonLife />  */}
-  //         {/* <Habitation /> */}
-  //         {/* <ExternalFeatures /> */}
-  //         <Preferences /> 
-  //         {/* <Btn /> */}
-  //         {/* <EndOfRegButton /> */}
-  //       </AppRoot>
-  //     );
-  //   }
-
-  //   return (
-  //     <div>
-  //       <h1>Ошибка: Telegram WebApp недоступен</h1>
-  //     </div>
-  //   );
-  // }
-
-  // export default App;
-
-  // import React from 'react';
-  // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-  // import NavigationBar from './components/NavigationBar';
-  // import '@telegram-apps/telegram-ui/dist/styles.css';
-  // import Home from './pages/Home';
-  // import Search from './pages/Search';
-  // import Settings from './pages/Settings';
-
-  // function App() {
-  //   const tg = window.Telegram?.WebApp;
-  //   tg?.ready();
-
-  //   return (
-  //     <Router>
-  //       <div className="app">
-  //         <Routes>
-  //           <Route path="/" element={<Home />} />
-  //           <Route path="/search" element={<Search />} />
-  //           <Route path="/settings" element={<Settings />} />
-  //         </Routes>
-  //         <NavigationBar />
-  //       </div>
-  //     </Router>
-  //   );
-  // }
-
-  // export default App;

@@ -76,12 +76,16 @@ const EducationPage = ({ onSubmit }) => {
 
 
   useEffect(() => {
-    const submitHandler = () => handleSubmit();
-    window.addEventListener("education-submit", submitHandler);
+    const mainButton = window.Telegram.WebApp.MainButton;
+  
+    mainButton.onClick(handleSubmit);
+    mainButton.show();
+  
     return () => {
-      window.removeEventListener("education-submit", submitHandler);
+      mainButton.offClick(handleSubmit);
     };
-  }, []);
+  }, [handleSubmit]);
+  
 
   return (
     <List>

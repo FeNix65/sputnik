@@ -3,6 +3,9 @@ import { FileInput, Headline, Section, List } from "@telegram-apps/telegram-ui";
 import "../assets/styles/EndOfRegistration.css";
 
 const EndOfRegistration = () => {
+
+  
+
   return (
     <List
       style={{
