@@ -65,11 +65,15 @@ const PageWithSteps = ({ page }) => {
     "end-of-registration": 4,
   };
 
+  const handleSubmit = (data) => {
+    console.log("Отправка данных:", data);
+  };
+
   return (
     <div>
       <StepsPanel progress={stepsMapping[page]} />
       {page === "general-info" && <GeneralInfo />}
-      {page === "education" && <EducationPage />}
+      {page === "education" && <EducationPage onSubmit={handleSubmit}/>}
       {page === "external-features" && <ExternalFeatures />}
       {page === "end-of-registration" && <EndOfRegistration />}
       {page === "person-life" && <PersonLife />}
@@ -97,6 +101,8 @@ const TelegramNavButton = ({ openModal }) => {
             navigate("/education");
             break;
           case "/education":
+            const event = new CustomEvent("education-submit");
+            window.dispatchEvent(event); 
             navigate("/external-features");
             break;
           case "/external-features":
