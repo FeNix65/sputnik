@@ -30,6 +30,7 @@ import config from "./config.js";
 
 function App() {
   const tg = window.Telegram?.WebApp;
+  const BackButton = tg?.BackButton; // Инициализация BackButton
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -39,8 +40,21 @@ function App() {
       tg.ready();
       tg.MainButton.text = "Создать профиль";
       tg.MainButton.show();
+
+      // Работа с BackButton
+      if (BackButton) {
+        BackButton.show();
+        BackButton.onClick(() => {
+          // tg.showAlert("Нет пути назад!");
+          BackButton.hide();
+        });
+
+        tg.onEvent("backButtonClicked", () => {
+          console.log("Back button clicked!");
+        });
+      }
     }
-  }, [tg]);
+  }, [tg, BackButton]);
 
   return (
     <RegistrationDataProvider>
