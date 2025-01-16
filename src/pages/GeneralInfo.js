@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useTokens } from "../States/TokenContext"; // Импортируем useTokens
 import {
   Radio,
   Cell,
@@ -7,72 +7,119 @@ import {
   Section,
   List,
   Button,
-  Divider
+  Divider,
+  Modal,
 } from "@telegram-apps/telegram-ui";
+import config from "../config.js"; // Исправлено: сonfig на config
+import { useRegistrationData } from "../States/RegistrationData";
 
-const GeneralInfo = ({ onSendData }) => {
-  const [firstName, setFirstName] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState("");
+const GeneralInfo = ({ onSubmit }) => {
+  // const { tokens } = useTokens();
+  const { registrationData, setRegistrationData } = useRegistrationData();
+  const [first_name, setFirstName] = useState(null);
+  const [short_description, setShortDescription] = useState(null);
+  const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [gender, setGender] = useState(null);
+  const [city, setCity] = useState("");
+  const [cities, setCities] = useState([]);
+  const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const prepareData = () => {
-    // Проверка даты рождения
-    const birthDate = new Date(dateOfBirth);
-    const birthYear = birthDate.getFullYear();
-    const currentDate = new Date();
-    const age = currentDate.getFullYear() - birthYear;
-
-    if (
-      birthYear < 1900 ||
-      age < 16 ||
-      (age === 16 &&
-        currentDate <
-          new Date(birthDate.setFullYear(birthDate.getFullYear() + 16)))
-    ) {
-      alert(
-        "Дата рождения должна быть после 1900 года, и вам должно быть больше 16 лет."
-      );
-      return null;
+  const fetchData = async (url, setter, mapper = (data) => data) => {
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+      if (result.ok) {
+        setter(mapper(result));
+      } else {
+        console.error("Неверный ответ сервера", result);
+      }
+    } catch (error) {
+      console.error(`Ошибка при запросе ${url}: `, error);
     }
-
-    return {
-      first_name: firstName,
-      short_description: shortDescription,
-      gender: gender,
-      date_of_birth: Math.floor(new Date(dateOfBirth).getTime() / 1000), // UNIX формат
-    };
   };
 
+  useEffect(() => {
+    // Загружаем города с сервера
+    fetchData(`${config.serverUrl}api/server.getCities`, (data) =>
+      setCities(data.cities)
+    );
+  }, []);
+
+  // Функция для сохранения данных регистрации
+  const handleSave = () => {
+    setRegistrationData({
+      ...registrationData,
+
+      first_name,
+      short_description,
+      gender,
+      date_of_birth: Math.floor(new Date(dateOfBirth).getTime() / 1000),
+      city_id: city.id,
+    });
+  };
+
+  // Подготовка данных перед отправкой
+  // const prepareData = () => {
+  //   const birthDate = new Date(dateOfBirth);
+  //   const birthYear = birthDate.getFullYear();
+  //   const currentDate = new Date();
+  //   const age = currentDate.getFullYear() - birthYear;
+
+  //   if (birthYear < 1900 || age < 16) {
+  //     alert(
+  //       "Дата рождения должна быть после 1900 года и вам должно быть больше 16 лет."
+  //     );
+  //     return null;
+  //   }
+
+  //   return {
+  //     first_name: firstName,
+  //     short_description: shortDescription,
+  //     gender,
+  //     date_of_birth: Math.floor(new Date(dateOfBirth).getTime() / 1000),
+  //     city,
+  //   };
+  // };
+
+  const handleSubmit = () => {
+    const data = {};
+    // console.log("Отправляемые данные:", data);
+    if (data) {
+      // Сохраняем данные в контексте
+      handleSave();
+      if (onSubmit) onSubmit(data);
+    }
+  };
+
+  useEffect(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+
+    mainButton.onClick(handleSubmit);
+    mainButton.show();
+
+    return () => {
+      mainButton.offClick(handleSubmit);
+    };
+  }, [handleSubmit]);
+
   return (
-    <List className="List">
-      <div
-    style={{
-      background: 'var(--tgui--bg_color)'
-    }}
-  >
-    <Cell>
-      Divider is under
-    </Cell>
-    <Divider />
-    <Cell>
-      Divider is above
-    </Cell>
-  </div>
+    <List className="list">
       <Section header="Общая информация">
         <Input
           placeholder="Имя"
-          value={firstName}
+          // value={first_name}
           onChange={(e) => setFirstName(e.target.value)}
         />
-         <Divider />
+        <Divider />
         <Input
           placeholder="Напишите о себе (максимум 256 символов)"
-          value={shortDescription}
+          value={short_description}
           maxLength={256}
           onChange={(e) => setShortDescription(e.target.value)}
         />
       </Section>
+
       <Section footer="В анкете будет отображаться только ваш возраст">
         <Input
           type="date"
@@ -80,38 +127,63 @@ const GeneralInfo = ({ onSendData }) => {
           value={dateOfBirth}
           onChange={(e) => setDateOfBirth(e.target.value)}
         />
+        <Modal
+          style={{ minHeight: 400 }}
+          header={<Modal.Header>Выберите город</Modal.Header>}
+          trigger={
+            <Cell id="city" onClick={() => setIsModalOpen(true)}>
+              {city.name || "Выберите город"}
+            </Cell>
+          }
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        >
+          <Input
+            placeholder="Поиск"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Section>
+            {(Array.isArray(cities) ? cities : [])
+              .filter((c) =>
+                c.name.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((filteredCity) => (
+                <Cell
+                  key={filteredCity.id}
+                  onClick={() => {
+                    setCity({ id: filteredCity.id, name: filteredCity.name });
+                    setIsModalOpen(false);
+                  }}
+                >
+                  {filteredCity.name}
+                </Cell>
+              ))}
+          </Section>
+        </Modal>
       </Section>
+
       <Section header="Выберите ваш пол">
         <Cell
-          className="gender__item"
+          Component="label"
+          onChange={() => setGender("male")}
           before={
-            <Radio
-              name="gender"
-              value="male"
-              checked={gender === "male"}
-              onChange={() => setGender("male")}
-            />
+            <Radio name="gender" value="male" checked={gender === "male"} />
           }
         >
           Мужской
         </Cell>
         <Cell
-          className="gender__item"
+          Component="label"
+          onChange={() => setGender("female")}
           before={
-            <Radio
-              name="gender"
-              value="female"
-              checked={gender === "female"}
-              onChange={() => setGender("female")}
-            />
+            <Radio name="gender" value="female" checked={gender === "female"} />
           }
         >
           Женский
         </Cell>
       </Section>
-      <Button onClick={() => onSendData(prepareData())}>
-        Тестовая отправка
-      </Button>
+      {/* <Button onClick={handleSubmit}>Создать профиль</Button> */}
     </List>
   );
 };

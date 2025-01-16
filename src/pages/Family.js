@@ -1,72 +1,106 @@
 import React, { useState } from "react";
 import {
-  Radio,
-  Cell,
-  Caption,
   Select,
-  Headline,
-  Textarea,
-  Accordion,
-  Subheadline,
-  List,
-  Section,
-  Multiselect,
   Input,
+  Divider,
+  Button,
+  Section,
+  List,
 } from "@telegram-apps/telegram-ui";
 
-const Family = () => {
+const Family = ({ onSendData }) => {
+  const [status, setStatus] = useState("");
+  const [budgetManagement, setBudgetManagement] = useState("");
+  const [siblings, setSiblings] = useState("");
+  const [otherInfo, setOtherInfo] = useState("");
+
+  // Маппинг для статуса семьи, кто распоряжается бюджетом и наличие братьев/сестер
+  const statusMap = {
+    "Полная семья": "full",
+    Разведены: "parted",
+    "Разведены и умерли": "dead_parted",
+    Неизвестно: "unknown",
+  };
+
+  const budgetManagementMap = {
+    Отец: "father",
+    Мать: "mother",
+    Оба: "both",
+  };
+
+  const siblingsMap = {
+    Есть: "yes",
+    Нет: "no",
+    Сводные: "step",
+  };
+
+  const prepareData = () => {
+    return {
+      status: statusMap[status] || "",
+      budget_management: budgetManagementMap[budgetManagement] || "",
+      siblings: siblingsMap[siblings] || "",
+      other_info: otherInfo,
+    };
+  };
+
+  const handleSubmit = () => {
+    const data = prepareData();
+    console.log("Отправляемые данные:", data);
+    // onSendData(data);
+  };
+
   return (
-    <List>
-      <Section header="Семья">
+    <List className="List">
+      <Section header="Информация о семье">
         <Select
-          placeholder="Ваша родительская семья"
-          name="Ваша родительская семья"
-          defaultValue=""
+          placeholder="Статус семьи"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
         >
           <option value="" disabled hidden>
-            Ваша родительская семья
+            Статус семьи
           </option>
-          <option>Традиционная семья</option>
-          <option>Одиночная родительская семья</option>
-          <option>Семья-патриархат</option>
-          <option>Детско-родительские отношения</option>
-          <option>Семья-компаньонов</option>
-          <option>Манипулятивные отношения</option>
-          <option>Сопернические отношения</option>
+          <option>Полная семья</option>
+          <option>Разведены</option>
+          <option>Разведены и умерли</option>
+          <option>Неизвестно</option>
         </Select>
-
+        <Divider />
         <Select
           placeholder="Кто распоряжается бюджетом"
-          name="Кто распоряжается бюджетом"
-          defaultValue=""
+          value={budgetManagement}
+          onChange={(e) => setBudgetManagement(e.target.value)}
         >
           <option value="" disabled hidden>
             Кто распоряжается бюджетом
           </option>
-          <option>Совместный</option>
-          <option>Смешанный</option>
-          <option>Единоличный</option>
+          <option>Отец</option>
+          <option>Мать</option>
+          <option>Оба</option>
         </Select>
-
+        <Divider />
         <Select
           placeholder="Наличие братьев и сестер"
-          name="Наличие братьев и сестер"
-          defaultValue=""
+          value={siblings}
+          onChange={(e) => setSiblings(e.target.value)}
         >
           <option value="" disabled hidden>
             Наличие братьев и сестер
           </option>
           <option>Есть</option>
-          <option>Отсутствуют</option>
+          <option>Нет</option>
+          <option>Сводные</option>
         </Select>
       </Section>
-
-      <Section
-        header="Прочая информация"
-        footer="Например: Брату 19 лет, менеджер Инстасвалки"
-      >
-        <Input placeholder="Прочая информация о вашей семье" />
+      <Divider />
+      <Section header="Прочая информация" footer="Максимум 256 символов">
+        <Input
+          placeholder="Прочая информация о семье"
+          value={otherInfo}
+          onChange={(e) => setOtherInfo(e.target.value)}
+        />
       </Section>
+      <Button onClick={handleSubmit}>Тестируем</Button>
     </List>
   );
 };

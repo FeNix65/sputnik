@@ -1,9 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Accordion, List, Section, Multiselect, Input, Cell, Modal, Button } from '@telegram-apps/telegram-ui';
+import React, { useState, useEffect } from "react";
+import {
+  Accordion,
+  List,
+  Section,
+  Multiselect,
+  Input,
+  Cell,
+  Modal,
+  Button,
+} from "@telegram-apps/telegram-ui";
+import config from "../config.js";
+import { useRegistrationData } from "../States/RegistrationData";
+
+// const handleSubmit = () => {
+//   const { updateRegistrationData } = useRegistrationData();
+//   const data = {
+//     speciality: {
+//       profession: selectedProfession,
+//       place_of_study: selectedStudyPlace,
+//       languages: selectedLanguages.map((lang) => lang.value),
+//       other_info: otherInfo,
+//     },
+//   };
+
+//   updateRegistrationData({ education: data });
+// };
 
 const EducationPage = ({ onSubmit }) => {
+  const { registrationData, setRegistrationData } = useRegistrationData();
+  // const { tokens } = useTokens();
   const [expandedAccordion, setExpandedAccordion] = useState(null);
-  
+
   // Состояния для мест обучения
   const [studyPlaces, setStudyPlaces] = useState({});
   const [selectedStudyPlace, setSelectedStudyPlace] = useState(null);
@@ -18,9 +45,10 @@ const EducationPage = ({ onSubmit }) => {
 
   // Состояния для языков
   const [languages, setLanguages] = useState([]);
+  const [languagesTouched, setLanguagesTouched] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
 
-  const [otherInfo, setOtherInfo] = useState("");
+  const [otherInfo, setOtherInfo] = useState(null);
 
   const handleAccordionChange = (id) => {
     setExpandedAccordion((prev) => (prev === id ? null : id));
@@ -42,56 +70,74 @@ const EducationPage = ({ onSubmit }) => {
   };
 
   useEffect(() => {
-    fetchData(
-      "https://АААААААААААА-ЖЕНЩИНЫ.рф/api/server.getStudyPlaces",
-      (data) => setStudyPlaces(data.study_places || {})
+    fetchData(`${config.serverUrl}api/server.getStudyPlaces`, (data) =>
+      setStudyPlaces(data.study_places || {})
     );
-    fetchData(
-      "https://АААААААААААА-ЖЕНЩИНЫ.рф/api/server.getProfessions",
-      (data) => setProfessions(data.professions.map((name, index) => ({ id: index, name })))
+    fetchData(`${config.serverUrl}api/server.getProfessions`, (data) =>
+      setProfessions(
+        data.professions.map((name, index) => ({ id: index, name }))
+      )
     );
-    fetchData(
-      "https://АААААААААААА-ЖЕНЩИНЫ.рф/api/server.getLangs",
-      (data) => setLanguages(data.languages.map((lang) => ({ value: lang.id, label: lang.name })))
+    fetchData(`${config.serverUrl}api/server.getLangs`, (data) =>
+      setLanguages(
+        data.languages.map((lang) => ({ value: lang.id, label: lang.name }))
+      )
     );
   }, []);
 
-  const handleSubmit = () => {
-    console.log("Профессия:", selectedProfession);
-    console.log("Место обучения:", selectedStudyPlace);
-    console.log("Языки:", selectedLanguages);
-    console.log("Прочая информация:", otherInfo);
-    const data = {
+  // Функция для сохранения данных в контекст
+  const handleSave = () => {
+    setRegistrationData({
+      ...registrationData,
       speciality: {
         profession: selectedProfession,
         place_of_study: selectedStudyPlace,
-        languages: selectedLanguages.map((lang) => lang.value),
+        languages: languagesTouched
+          ? selectedLanguages.length > 0
+            ? selectedLanguages.map((lang) => lang.value)
+            : []
+          : null,
         other_info: otherInfo,
       },
+    });
+  };
+  const handleSubmit = () => {
+    // console.log("Профессия:", selectedProfession);
+    // console.log("Место обучения:", selectedStudyPlace);
+    // console.log("Языки:", selectedLanguages);
+    // console.log("Прочая информация:", otherInfo);
+    const data = {
+      // speciality: {
+      //   profession: selectedProfession,
+      //   place_of_study: selectedStudyPlace,
+      //   languages: selectedLanguages.map((lang) => lang.value),
+      //   other_info: otherInfo,
+      // },
     };
-
-    console.log(JSON.stringify(data, null, 2));
+    handleSave();
+    // console.log(JSON.stringify(data, null, 2));
     if (onSubmit) onSubmit(data);
   };
 
-
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
-  
+
     mainButton.onClick(handleSubmit);
     mainButton.show();
-  
+
     return () => {
       mainButton.offClick(handleSubmit);
     };
   }, [handleSubmit]);
-  
 
   return (
     <List>
       {/* Модалка для профессий */}
       <Section header="Специализация">
         <Modal
+          style={{
+            height: 400,
+          }}
           header={<Modal.Header>Выберите профессию</Modal.Header>}
           trigger={
             <Cell
@@ -111,7 +157,9 @@ const EducationPage = ({ onSubmit }) => {
           />
           <Section>
             {professions
-              .filter((p) => p.name.toLowerCase().includes(searchProfession.toLowerCase()))
+              .filter((p) =>
+                p.name.toLowerCase().includes(searchProfession.toLowerCase())
+              )
               .map((filteredProfession) => (
                 <Cell
                   key={filteredProfession.id}
@@ -178,7 +226,10 @@ const EducationPage = ({ onSubmit }) => {
         <Multiselect
           options={languages}
           value={selectedLanguages}
-          onChange={(options) => setSelectedLanguages(options)}
+          onChange={(options) => {
+            setSelectedLanguages(options);
+            setLanguagesTouched(true);
+          }}
           sectionHeader="Выберите из доступных вариантов"
           placeholder="Выберите языки"
           selectedBehavior="highlight"

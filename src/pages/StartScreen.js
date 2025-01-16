@@ -1,11 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 // import '../assets/styles/StartScreen.css';
-import SputnikLogo from '../assets/images/sputnik-logo.png';
-import { Placeholder, Button, List, Section } from '@telegram-apps/telegram-ui';
+import SputnikLogo from "../assets/images/sputnik-logo.png";
+import { Placeholder, Button, List, Section } from "@telegram-apps/telegram-ui";
+import { useTokens } from "../States/TokenContext";
 
 function StartScreen() {
   const tg = window.Telegram.WebApp;
-
+  const { tokens } = useTokens();
+  useEffect(() => {
+    // Вставить логику, которая использует токены, если они есть
+    if (tokens) {
+      console.log("Токены на странице :", tokens);
+    } else {
+      console.log("Токенов на странице  нет");
+    }
+  }, [tokens]);
   // Подключаем тему
   // useEffect(() => {
   //   if (tg?.themeParams) {
@@ -18,10 +27,10 @@ function StartScreen() {
 
   return (
     <List>
-      <Section >
+      <Section>
         <Placeholder
           style={{
-            height: 620
+            height: 620,
             // width: 500
           }}
           description="Принципиально новый сервис для знакомств в Telegram, нацеленный на создание семейных пар."
@@ -36,13 +45,15 @@ function StartScreen() {
             src={SputnikLogo}
           />
         </Placeholder>
-        </Section>
-        <Section 
-        style={{
-          position: "absolute", bottom: "35px", left: "16px", right: "16px"
-        }}
-        >
       </Section>
+      <Section
+        style={{
+          position: "absolute",
+          bottom: "35px",
+          left: "16px",
+          right: "16px",
+        }}
+      ></Section>
     </List>
   );
 }

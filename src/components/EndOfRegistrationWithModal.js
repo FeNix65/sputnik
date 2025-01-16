@@ -33,6 +33,11 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
     }
   }, [tg, closeModal]);
 
+  const handlePageClick = (path) => {
+    navigate(path); // Навигация на выбранную страницу
+    closeModal(); // Закрываем модальное окно
+  };
+
   return (
     <Modal
       header={<Modal.Header>Дополнительная информация</Modal.Header>}
@@ -41,7 +46,7 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
     >
       <Section footer="Нажмите на пункт, чтобы открыть соответствующую страницу.">
         {pages.map((page, index) => (
-          <Cell key={index} onClick={() => navigate(page.path)}>
+          <Cell key={index} onClick={() => handlePageClick(page.path)}>
             {page.title}
           </Cell>
         ))}

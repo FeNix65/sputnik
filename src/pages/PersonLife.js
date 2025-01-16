@@ -1,119 +1,175 @@
 import React, { useState } from "react";
-
 import {
   Radio,
   Cell,
-  Caption,
-  Select,
-  Headline,
-  Textarea,
-  Accordion,
-  Subheadline,
+  Button,
   List,
   Section,
-  Multiselect,
-  Input,
+  Headline,
   Slider,
-
+  IconContainer,
 } from "@telegram-apps/telegram-ui";
-import "../assets/styles/PersonalLife.css";
 
+const PersonalLife = ({ onSendData }) => {
+  const [hasRelationships, setHasRelationships] = useState(null);
+  const [hasIntimacyRelationships, setHasIntimacyRelationships] =
+    useState(null);
+  const [hasMarried, setHasMarried] = useState(null);
 
+  const [value, setValue] = useState(3); // Значение по умолчанию
 
-const PersonalLife = () => {
-  const SteppedRangeSlider = () => {
-    // const [value, setValue] = useState(3);
-  
-    // const handleSliderChange = (event, newValue) => {
-    //   setValue(newValue);
-    // };
-  
-    // return (
-    //   <div style={{ width: 300, margin: '0 auto', textAlign: 'center' }}>
-    //     <Typography variant="h6">Количество детей</Typography>
-    //     <Slider
-    //       value={value}
-    //       onChange={handleSliderChange}
-    //       step={1} // Шаг слайдера
-    //       min={1} // Минимальное значение
-    //       max={32} // Максимальное значение
-    //       valueLabelDisplay="on" // Показ значения рядом с ползунком
-    //     />
-    //   </div>
-    // );
+  const handleSliderChange = (newValue) => {
+    setValue(newValue); // Обновляем состояние значением слайдера
   };
+
+  const handleSubmit = () => {
+    const data = {
+      has_relationships: hasRelationships === "YES",
+      has_intimacy_relationships: hasIntimacyRelationships === "YES",
+      has_married: hasMarried === "YES",
+      child_count: value, // Количество детей
+    };
+    console.log("Отправляемые данные:", data);
+    // onSendData(data); // Вызов onSendData с данными
+  };
+
   return (
     <List
-      style={{
-        background: "var(--tgui--secondary_bg_color)",
-        padding: "15px",
-        height: 600,
-      }}
+      style={{ background: "var(--tgui--secondary_bg_color)", padding: "15px" }}
     >
       <Headline level="1" weight="1">
         Личная жизнь
       </Headline>
-      
-      <Section header="БЫЛИ ЛИ У ВАС ОТНОШЕНИЯ"></Section>
-      <form className="relationships">
-        <Section>
-          <Cell
-            className="relationships__item"
-            before={<Radio name="radio" value="NO" />}
-          >
-            Нет
-          </Cell>
-        </Section>
-        <Section>
-          <Cell
-            className="relationships__item"
-            before={<Radio name="radio" value="YES" />}
-          >
-            Да
-          </Cell>
-        </Section>
+
+      <Section header="БЫЛИ ЛИ У ВАС ОТНОШЕНИЯ">
+        <form className="relationships">
+          <Section>
+            <Cell
+              className="relationships__item"
+              before={
+                <Radio
+                  name="hasRelationships"
+                  value="NO"
+                  checked={hasRelationships === "NO"}
+                  onChange={() => setHasRelationships("NO")}
+                />
+              }
+            >
+              Нет
+            </Cell>
+          </Section>
+          <Section>
+            <Cell
+              className="relationships__item"
+              before={
+                <Radio
+                  name="hasRelationships"
+                  value="YES"
+                  checked={hasRelationships === "YES"}
+                  onChange={() => setHasRelationships("YES")}
+                />
+              }
+            >
+              Да
+            </Cell>
+          </Section>
         </form>
-        <Section header="БЫЛИ ЛИ У ВАС ПОЛОВЫЕ ОТНОШЕНИЯ"></Section>
-      <form className="relationships">
-        <Section>
-          <Cell
-            className="relationships__item"
-            before={<Radio name="radio" value="NO" />}
-          >
-            Нет
-          </Cell>
-        </Section>
-        <Section>
-          <Cell
-            className="relationships__item"
-            before={<Radio name="radio" value="YES" />}
-          >
-            Да
-          </Cell>
-        </Section>
-        </form>
-        <Section header="БЫЛИ ЛИ ВЫ ЗАМУЖЕМ"></Section>
-      <form className="relationships">
-        <Section>
-          <Cell
-            className="relationships__item"
-            before={<Radio name="radio" value="NO" />}
-          >
-            Нет
-          </Cell>
-        </Section>
-        <Section>
-          <Cell
-            className="relationships__item"
-            before={<Radio name="radio" value="YES" />}
-          >
-            Да
-          </Cell>
-        </Section>
-      </form>
-      <Section header="Колличество детей">
-        <Slider step={32} multiple />
       </Section>
+
+      <Section header="БЫЛИ ЛИ У ВАС ПОЛОВЫЕ ОТНОШЕНИЯ">
+        <form className="relationships">
+          <Section>
+            <Cell
+              className="relationships__item"
+              before={
+                <Radio
+                  name="hasIntimacyRelationships"
+                  value="NO"
+                  checked={hasIntimacyRelationships === "NO"}
+                  onChange={() => setHasIntimacyRelationships("NO")}
+                />
+              }
+            >
+              Нет
+            </Cell>
+          </Section>
+          <Section>
+            <Cell
+              className="relationships__item"
+              before={
+                <Radio
+                  name="hasIntimacyRelationships"
+                  value="YES"
+                  checked={hasIntimacyRelationships === "YES"}
+                  onChange={() => setHasIntimacyRelationships("YES")}
+                />
+              }
+            >
+              Да
+            </Cell>
+          </Section>
+        </form>
+      </Section>
+
+      <Section header="БЫЛИ ЛИ ВЫ ЗАМУЖЕМ">
+        <form className="relationships">
+          <Section>
+            <Cell
+              className="relationships__item"
+              before={
+                <Radio
+                  name="hasMarried"
+                  value="NO"
+                  checked={hasMarried === "NO"}
+                  onChange={() => setHasMarried("NO")}
+                />
+              }
+            >
+              Нет
+            </Cell>
+          </Section>
+          <Section>
+            <Cell
+              className="relationships__item"
+              before={
+                <Radio
+                  name="hasMarried"
+                  value="YES"
+                  checked={hasMarried === "YES"}
+                  onChange={() => setHasMarried("YES")}
+                />
+              }
+            >
+              Да
+            </Cell>
+          </Section>
+        </form>
+      </Section>
+
+      <Section header="Количество детей">
+        <div style={{ width: "100%" }}>
+          {/* <span
+            style={{
+              display: "block",
+              textAlign: "center",
+              marginBottom: "10px",
+              fontSize: "18px",
+            }}
+          >
+            {value}
+          </span> */}
+          <Slider
+            after={<IconContainer>{value}</IconContainer>}
+            onChange={handleSliderChange} // Передаем новое значение
+            min={1} // Минимальное значение
+            max={32} // Максимальное значение
+            step={1} // Шаг
+            style={{ width: "85%" }} // Слайдер занимает всю ширину
+          />
+        </div>
+      </Section>
+
+      <Button onClick={handleSubmit}>Тест</Button>
     </List>
   );
 };

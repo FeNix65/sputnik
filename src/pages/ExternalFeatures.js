@@ -1,59 +1,111 @@
 import React, { useState, useEffect } from "react";
-import { Select, List, Section, Input, Multiselect } from "@telegram-apps/telegram-ui";
+import {
+  Select,
+  List,
+  Section,
+  Input,
+  Multiselect,
+} from "@telegram-apps/telegram-ui";
 import "../assets/styles/ExternalFeatures.css";
+import { useRegistrationData } from "../States/RegistrationData";
+// import { useTokens } from "../States/TokenContext"; // Импортируем useTokens
 
-const ExternalFeatures = () => {
+const ExternalFeatures = (onSubmit) => {
+  // const { tokens } = useTokens();
+  // useEffect(() => {
+  //   // Вставить логику, которая использует токены, если они есть
+  //   if (tokens) {
+  //     console.log("Токены на странице :", tokens);
+  //   } else {
+  //     console.log("Токенов на странице  нет");
+  //   }
+  // }, [tokens]);
+  const { registrationData, setRegistrationData } = useRegistrationData();
   const [appearanceIssues] = useState([
     { value: "piercing", label: "пирсинг" },
     { value: "tattoos", label: "татуировки" },
-    { value: "other", label: "другое" }
+    { value: "other", label: "другое" },
   ]);
 
   const [selectedAppearanceIssues, setSelectedAppearanceIssues] = useState([]);
-  const [badHabits] = useState([
+  const [appearanceIssuesTouched, setAppearanceIssuesTouched] = useState(false);
+  const [bad_practices] = useState([
     { value: "smoking", label: "курение" },
     { value: "alcohol", label: "алкоголь" },
     { value: "drugs", label: "наркотики" },
-    { value: "other", label: "другое" }
+    { value: "other", label: "другое" },
   ]);
   const [selectedBadHabits, setSelectedBadHabits] = useState([]);
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [physique, setPhysique] = useState("");
-  const [otherInfo, setOtherInfo] = useState("");
+  const [badHabitsTouched, setBadHabitsTouched] = useState(false);
+  const [height, setHeight] = useState(null);
+  const [weight, setWeight] = useState(null);
+  const [physique, setPhysique] = useState(null);
+  const [otherInfo, setOtherInfo] = useState(null);
 
-  const handleSubmits = () => {
+  const handleSubmit = () => {
     const data = {
       appearance: {
         height: parseInt(height, 10),
         weight: parseInt(weight, 10),
         physique,
-        appearanceIssues: selectedAppearanceIssues.map(item => item.value),
-        badHabits: selectedBadHabits.map(item => item.value),
-        other_info: otherInfo
-      }
+        appearanceIssues: appearanceIssuesTouched
+          ? selectedAppearanceIssues.length > 0
+            ? selectedAppearanceIssues.map((item) => item.value)
+            : []
+          : null,
+        badHabits: badHabitsTouched
+          ? selectedBadHabits.length > 0
+            ? selectedBadHabits.map((item) => item.value)
+            : []
+          : null,
+        other_info: otherInfo,
+      },
     };
+    if (data) {
+      handleSave();
+      if (onSubmit) onSubmit(data);
+    }
+  };
 
-    console.log(JSON.stringify(data, null, 2));
-
-    const event = new CustomEvent("external-features-submit", { detail: data });
-    window.dispatchEvent(event);
+  const handleSave = () => {
+    setRegistrationData({
+      ...registrationData,
+      appearance: {
+        height: parseInt(height, 10),
+        weight: parseInt(weight, 10),
+        physique,
+        appearance_issues: appearanceIssuesTouched
+          ? selectedAppearanceIssues.length > 0
+            ? selectedAppearanceIssues.map((item) => item.value)
+            : []
+          : null,
+        bad_practices: badHabitsTouched
+          ? selectedBadHabits.length > 0
+            ? selectedBadHabits.map((item) => item.value)
+            : []
+          : null,
+        other_info: otherInfo,
+      },
+    });
   };
 
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
 
-    mainButton.onClick(handleSubmits);
+    mainButton.onClick(handleSubmit);
     mainButton.show();
 
     return () => {
-      mainButton.offClick(handleSubmits);
+      mainButton.offClick(handleSubmit);
     };
-  }, [handleSubmits]);
+  }, [handleSubmit]);
 
   return (
     <List>
-      <Section header="Внешность" footer="Данная информация не является обязательной.">
+      <Section
+        header="Внешность"
+        footer="Данная информация не является обязательной."
+      >
         <form className="form-section">
           <Input
             placeholder="Рост"
@@ -83,15 +135,21 @@ const ExternalFeatures = () => {
         <Multiselect
           options={appearanceIssues}
           value={selectedAppearanceIssues}
-          onChange={(selected) => setSelectedAppearanceIssues(selected)}
+          onChange={(selected) => {
+            setSelectedAppearanceIssues(selected);
+            setAppearanceIssuesTouched(true);
+          }}
           sectionHeader="Особенности внешности"
         />
       </Section>
       <Section header="Вредные привычки">
         <Multiselect
-          options={badHabits}
+          options={bad_practices}
           value={selectedBadHabits}
-          onChange={(selected) => setSelectedBadHabits(selected)}
+          onChange={(selected) => {
+            setSelectedBadHabits(selected);
+            setBadHabitsTouched(true);
+          }}
           sectionHeader="Вредные привычки"
         />
       </Section>
