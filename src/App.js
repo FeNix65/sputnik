@@ -6,7 +6,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { AppRoot, Button } from "@telegram-apps/telegram-ui";
+import { AppRoot } from "@telegram-apps/telegram-ui";
 import Initializator from "./components/Initializator.js";
 import { TokenProvider } from "./States/TokenContext";
 import {
@@ -26,7 +26,7 @@ import Habitation from "./pages/Habitation";
 import Preferences from "./pages/Preferences";
 import Family from "./pages/Family";
 import Settings from "./pages/Settings.js";
-import config from "./config.js"; // Исправлено: сonfig на config
+import config from "./config.js";
 
 function App() {
   const tg = window.Telegram?.WebApp;
@@ -39,15 +39,10 @@ function App() {
       tg.ready();
       tg.MainButton.text = "Создать профиль";
       tg.MainButton.show();
-
-      // const initData = tg.initData;
     }
   }, [tg]);
-  // saveTokens
-  //
 
   return (
-    // <AuthProvider>
     <RegistrationDataProvider>
       <AppRoot style={{ background: "var(--tgui--secondary_bg_color)" }}>
         <TokenProvider>
@@ -71,12 +66,7 @@ function App() {
                 path="/end-of-registration"
                 element={<PageWithSteps page="end-of-registration" />}
               />
-
-              <Route
-                path="/settings"
-                element={<PageWithSteps page="settings" />}
-              />
-
+              <Route path="/settings" element={<PageWithSteps page="settings" />} />
               <Route
                 path="/person-life"
                 element={<PageWithSteps page="person-life" />}
@@ -90,28 +80,21 @@ function App() {
                 path="/preferences"
                 element={<PageWithSteps page="preferences" />}
               />
-
-              {/* <Route
-                path="/modal"
-                element={
-                  <EndOfRegistrationWithModal
-                    isModalOpen={isModalOpen}
-                    closeModal={closeModal}
-                  />
-                }
-              /> */}
             </Routes>
-            {isModalOpen && <EndOfRegistrationWithModal isModalOpen={isModalOpen} closeModal={closeModal} />}
-            <TelegramNavButton openModal={openModal} />
+            {isModalOpen && (
+              <EndOfRegistrationWithModal
+                isModalOpen={isModalOpen}
+                closeModal={closeModal}
+              />
+            )}
+            <TelegramNavButton openModal={openModal} isModalOpen={isModalOpen} />
           </Router>
         </TokenProvider>
       </AppRoot>
     </RegistrationDataProvider>
-    // </AuthProvider>
   );
 }
 
-// Обертка для страниц
 const PageWithSteps = ({ page }) => {
   const stepsMapping = {
     "general-info": 1,
@@ -137,18 +120,15 @@ const PageWithSteps = ({ page }) => {
   );
 };
 
-// Кнопка Telegram для навигации
-const TelegramNavButton = ({ openModal }) => {
+const TelegramNavButton = ({ openModal, isModalOpen }) => {
   let access_token = localStorage.getItem("access_token");
   const navigate = useNavigate();
   const location = useLocation();
   const tg = window.Telegram?.WebApp;
   const { registrationData } = useRegistrationData();
-
+  const [isSettingsLoaded, setIsSettingsLoaded] = useState(false); // Состояние для загрузки
 
   const handleFinalSubmit = async () => {
-    // Получаем данные из контекста или состояния
-
     const requestOptions = {
       method: "POST",
       headers: {
@@ -163,14 +143,11 @@ const TelegramNavButton = ({ openModal }) => {
         `${config.serverUrl}api/users.editProfile`,
         requestOptions
       );
-      // console.log("Данные :", registrationData);
       if (!response.ok) {
         throw new Error("Сеть ответила с ошибкой");
       }
-
-      const result = await response.json(); // Преобразуем ответ в JSON
+      const result = await response.json();
       console.log("Данные успешно отправлены:", result);
-      // Дополнительная логика после успешной отправки
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
@@ -179,11 +156,11 @@ const TelegramNavButton = ({ openModal }) => {
   useEffect(() => {
     if (tg) {
       tg.MainButton.onClick(() => {
+        if (isModalOpen) return;
+
         switch (location.pathname) {
           case "/":
             navigate("/general-info");
-            // const event = new CustomEvent("generalInfo-submit");
-            // window.dispatchEvent(event);
             break;
           case "/general-info":
             navigate("/education");
@@ -196,43 +173,20 @@ const TelegramNavButton = ({ openModal }) => {
             break;
           case "/end-of-registration":
             handleFinalSubmit();
-            // handleNavigateAndOpenModal("/modal");
-            // navigate("/modal");
-            // EndOfRegistrationWithModal();
             navigate("/settings");
+            setIsSettingsLoaded(false); // Устанавливаем загрузку
             break;
-          // case "/modal":
-            
-          //   break;  
-            
-          case "/settings":
-            openModal();
-            // navigate("/person-life");
-            break;
-          
-            // break;
-          case "/person-life":
-            // navigate("/family");
-            openModal();
-            break;
-          case "/family":
-            // navigate("/habitation");
-            openModal();
-            break;
-          case "/habitation":
-            // navigate("/preferences");
-            openModal();
-            break;
-          case "/preferences":
-            openModal();
-            break;
-          
           default:
             tg.MainButton.hide();
         }
       });
 
       const updateButtonText = () => {
+        if (isModalOpen) {
+          tg.MainButton.hide();
+          return;
+        }
+
         switch (location.pathname) {
           case "/":
             tg.MainButton.text = "Создать профиль";
@@ -247,36 +201,26 @@ const TelegramNavButton = ({ openModal }) => {
           case "/end-of-registration":
             tg.MainButton.text = "Завершить регистрацию";
             break;
-
-          case "/settings":
-            tg.MainButton.text = "Настройки";
-            break;
-
-          case "/person-life":
-            tg.MainButton.text = "Сохранить";
-            break;
-          case "/habitation":
-            tg.MainButton.text = "Сохранить";
-            break;
-          case "/preferences":
-            tg.MainButton.text = "Сохранить";
-            break;
-          case "/family":
-            tg.MainButton.text = "Сохранить";
-            break;
-
-          case "/modal":
-            tg.MainButton.text = "Пропустить";
-            break;
           default:
-            tg.MainButton.text = "Продолжить";
+            tg.MainButton.text = "Сохранить";
         }
         tg.MainButton.show();
       };
 
       updateButtonText();
     }
-  }, [location, navigate, tg, openModal]);
+  }, [location, navigate, tg, openModal, isModalOpen]);
+
+  useEffect(() => {
+    if (location.pathname === "/settings" && !isModalOpen) {
+      const timeout = setTimeout(() => {
+        setIsSettingsLoaded(true);
+        openModal(); // Открываем модалку
+      }, 100); // Время загрузки
+
+      return () => clearTimeout(timeout); // Очищаем таймер
+    }
+  }, [location, openModal, isModalOpen]);
 
   return null;
 };
