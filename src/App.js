@@ -36,7 +36,19 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const [habitationData, setHabitationData] = useState(null);
+  const [personalLifeData, setPersonalLifeData] = useState(null);
+  const handlePersonalLifeData = (data) => {
+    setPersonalLifeData(data);
+    console.log("Данные из PersonLife:", data);
+    // Сохраняем данные из PersonLife
+  };
 
+  const handleHabitationData = (data) => {
+    setHabitationData(data);
+    console.log("Данные из habitation:", data);
+    // Сохраняем данные из PersonLife
+  };
   useEffect(() => {
     if (tg) {
       tg.ready();
@@ -93,12 +105,13 @@ function App() {
 
               <Route
                 path="/person-life"
-                element={<PageWithSteps page="person-life" />}
+                element={<PersonLife onSendData={handlePersonalLifeData} />}
               />
+
               <Route path="/family" element={<PageWithSteps page="family" />} />
               <Route
                 path="/habitation"
-                element={<PageWithSteps page="habitation" />}
+                element={<Habitation onSendData={handleHabitationData} />}
               />
               <Route
                 path="/preferences"
@@ -150,16 +163,29 @@ const PageWithSteps = ({ page }) => {
 };
 
 // Кнопка Telegram для навигации
-const TelegramNavButton = ({ openModal, isModalOpen }) => {
+const TelegramNavButton = ({
+  openModal,
+  isModalOpen,
+  personalLifeData,
+  habitationData,
+}) => {
   let access_token = localStorage.getItem("access_token");
   const navigate = useNavigate();
   const location = useLocation();
   const tg = window.Telegram?.WebApp;
   const { registrationData } = useRegistrationData();
+
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false); // Состояние для загрузки
 
   const handleFinalSubmit = async () => {
     // Получаем данные из контекста или состояния
+
+    const dataToSend = {
+      ...registrationData,
+      habitation: habitationData,
+      personalLife: personalLifeData,
+    };
+    console.log("Данные для отправки:", dataToSend);
 
     const requestOptions = {
       method: "POST",
@@ -167,7 +193,7 @@ const TelegramNavButton = ({ openModal, isModalOpen }) => {
         Authorization: `Bearer ${access_token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(registrationData),
+      body: JSON.stringify(dataToSend),
     };
 
     try {
@@ -188,35 +214,65 @@ const TelegramNavButton = ({ openModal, isModalOpen }) => {
     }
   };
 
-  // const handleSubFinalSubmit = async () => {
-  //   // Получаем данные из контекста или состояния
+  const hadleHabitationSubmit = async () => {
+    // Получаем данные из контекста или состояния
 
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: `Bearer ${access_token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(registrationData),
-  //   };
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(habitationData),
+    };
+    console.log("Данные :", habitationData);
+    try {
+      const response = await fetch(
+        `${config.serverUrl}api/users.editProfile`,
+        requestOptions
+      );
+      console.log("Данные :", habitationData);
+      if (!response.ok) {
+        throw new Error("Сеть ответила с ошибкой");
+      }
 
-  //   try {
-  //     const response = await fetch(
-  //       `${config.serverUrl}api/users.editProfile`,
-  //       requestOptions
-  //     );
-  //     // console.log("Данные :", registrationData);
-  //     if (!response.ok) {
-  //       throw new Error("Сеть ответила с ошибкой");
-  //     }
+      const result = await response.json(); // Преобразуем ответ в JSON
+      console.log("Данные успешно отправлены:", result);
+      // Дополнительная логика после успешной отправки
+    } catch (error) {
+      console.error("Ошибка отправки данных:", error);
+    }
+  };
 
-  //     const result = await response.json(); // Преобразуем ответ в JSON
-  //     console.log("Данные успешно отправлены:", result);
-  //     // Дополнительная логика после успешной отправки
-  //   } catch (error) {
-  //     console.error("Ошибка отправки данных:", error);
-  //   }
-  // };
+  const handlePersonalLifeSubmit = async () => {
+    // Получаем данные из контекста или состояния
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(personalLifeData),
+    };
+
+    try {
+      const response = await fetch(
+        `${config.serverUrl}api/users.editProfile`,
+        requestOptions
+      );
+      // console.log("Данные :", registrationData);
+      if (!response.ok) {
+        throw new Error("Сеть ответила с ошибкой");
+      }
+
+      const result = await response.json(); // Преобразуем ответ в JSON
+      console.log("Данные успешно отправлены:", result);
+      // Дополнительная логика после успешной отправки
+    } catch (error) {
+      console.error("Ошибка отправки данных:", error);
+    }
+  };
 
   useEffect(() => {
     if (tg) {
@@ -240,6 +296,12 @@ const TelegramNavButton = ({ openModal, isModalOpen }) => {
             handleFinalSubmit();
             navigate("/settings");
             setIsSettingsLoaded(false); // Устанавливаем загрузку
+            break;
+          case "/person-life":
+            handlePersonalLifeSubmit();
+            break;
+          case "/habitation":
+            hadleHabitationSubmit();
             break;
           default:
             tg.MainButton.hide();

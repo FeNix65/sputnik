@@ -22,18 +22,16 @@ const PersonalLife = ({ onSendData }) => {
   const handleSliderChange = (newValue) => {
     setValue(newValue); // Обновляем состояние значением слайдера
   };
-
-  const handleSubmit = () => {
+  const OnSendData = () => {
     const data = {
       has_relationships: hasRelationships === "YES",
       has_intimacy_relationships: hasIntimacyRelationships === "YES",
       has_married: hasMarried === "YES",
       child_count: value, // Количество детей
     };
-    console.log("Отправляемые данные:", data);
-    // onSendData(data); // Вызов onSendData с данными
+    console.log("Отправляемые данные:", data); // Логируем перед отправкой
+    onSendData(data); // Вызов onSendData с данными
   };
-
   return (
     <List
       className="list"
@@ -163,15 +161,13 @@ const PersonalLife = ({ onSendData }) => {
           <Slider
             after={<IconContainer>{value}</IconContainer>}
             onChange={handleSliderChange} // Передаем новое значение
-            min={1} // Минимальное значение
+            min={0} // Минимальное значение
             max={32} // Максимальное значение
             step={1} // Шаг
             style={{ width: "85%" }} // Слайдер занимает всю ширину
           />
         </div>
       </Section>
-
-      <Button onClick={handleSubmit}>Тест</Button>
     </List>
   );
 };

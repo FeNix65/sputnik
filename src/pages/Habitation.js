@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Select, List, Section, Button } from "@telegram-apps/telegram-ui";
 import "../assets/styles/GeneralStyle.css";
 
-const Habitation = ({}) => {
+const Habitation = ({ onSendData }) => {
   const [status, setStatus] = useState("");
   const [financialStatus, setFinancialStatus] = useState("");
   const [transferAbility, setTransferAbility] = useState("");
@@ -33,21 +33,44 @@ const Habitation = ({}) => {
     "Фермерские животные": "farm",
   };
 
-  const prepareData = () => {
-    return {
-      status: statusMap[status] || "",
-      financial_status: financialStatusMap[financialStatus] || "",
-      transfer_ability: transferAbility === "Да" ? "yes" : "no",
-      automobile: automobile === "Да" ? "yes" : "no",
-      animals: animalsMap[animals] || "",
+  const handleSave = () => {
+    const data = {
+      living: {
+        status: statusMap[status] || "",
+        financial_status: financialStatusMap[financialStatus] || "",
+        transfer_ability: transferAbility === "Да" ? "yes" : "no",
+        automobile: automobile === "Да" ? "yes" : "no",
+        animals: animalsMap[animals] || "",
+      },
     };
+    return data; // Возвращаем данные
   };
 
   const handleSubmit = () => {
-    const data = prepareData();
+    const data = handleSave(); // Получаем данные из handleSave
     console.log("Отправляемые данные:", data);
-    // onSendData(data);
+    if (data) {
+      // Сохраняем данные в контексте
+      if (onSendData) onSendData(data);
+    }
   };
+
+  useEffect(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+
+    mainButton.onClick(handleSubmit);
+    mainButton.show();
+
+    return () => {
+      mainButton.offClick(handleSubmit);
+    };
+  }, [handleSubmit]);
+
+  // const handleSubmit = () => {
+  //   const data = prepareData();
+  //   console.log("Отправляемые данные:", data);
+  //   // onSendData(data);
+  // };
 
   return (
     <List className="list">
@@ -121,8 +144,6 @@ const Habitation = ({}) => {
           <option>Фермерские животные</option>
         </Select>
       </Section>
-
-      <Button onClick={handleSubmit}>Отправить</Button>
     </List>
   );
 };
