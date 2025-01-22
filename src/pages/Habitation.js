@@ -3,11 +3,11 @@ import { Select, List, Section, Button } from "@telegram-apps/telegram-ui";
 import "../assets/styles/GeneralStyle.css";
 
 const Habitation = ({ onSendData }) => {
-  const [status, setStatus] = useState("");
-  const [financialStatus, setFinancialStatus] = useState("");
-  const [transferAbility, setTransferAbility] = useState("");
-  const [automobile, setAutomobile] = useState("");
-  const [animals, setAnimals] = useState([]);
+  const [status, setStatus] = useState(null);
+  const [financialStatus, setFinancialStatus] = useState(null);
+  const [transferAbility, setTransferAbility] = useState(null);
+  const [automobile, setAutomobile] = useState(null);
+  const [animals, setAnimals] = useState(null);
 
   const statusMap = {
     "С родителями": "with_parents",

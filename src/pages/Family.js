@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Select,
   Input,
@@ -9,10 +9,10 @@ import {
 } from "@telegram-apps/telegram-ui";
 
 const Family = ({ onSendData }) => {
-  const [status, setStatus] = useState("");
-  const [budgetManagement, setBudgetManagement] = useState("");
-  const [siblings, setSiblings] = useState("");
-  const [otherInfo, setOtherInfo] = useState("");
+  const [status, setStatus] = useState(null);
+  const [budgetManagement, setBudgetManagement] = useState(null);
+  const [siblings, setSiblings] = useState(null);
+  const [otherInfo, setOtherInfo] = useState(null);
 
   // Маппинг для статуса семьи, кто распоряжается бюджетом и наличие братьев/сестер
   const statusMap = {

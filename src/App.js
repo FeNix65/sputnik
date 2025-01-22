@@ -37,10 +37,22 @@ function App() {
   const closeModal = () => setIsModalOpen(false);
   const [habitationData, setHabitationData] = useState(null);
   const [personalLifeData, setPersonalLifeData] = useState(null);
+  const [familyData, setFamilyData] = useState(null);
+  const [prefersData, setPrefersData] = useState(null);
 
   const handlePersonalLifeData = (data) => {
     setPersonalLifeData(data);
     console.log("Данные из PersonLife:", data);
+  };
+
+  const handlePrefersData = (data) => {
+    setPrefersData(data);
+    console.log("Данные из преферс:", data);
+  };
+
+  const handleFamilyData = (data) => {
+    setFamilyData(data);
+    console.log("Данные из семи:", data);
   };
 
   const handleHabitationData = (data) => {
@@ -99,14 +111,17 @@ function App() {
                 path="/person-life"
                 element={<PersonLife onSendData={handlePersonalLifeData} />}
               />
-              <Route path="/family" element={<PageWithSteps page="family" />} />
+              <Route
+                path="/family"
+                element={<Family onSendData={handleFamilyData} />}
+              />
               <Route
                 path="/habitation"
                 element={<Habitation onSendData={handleHabitationData} />}
               />
               <Route
                 path="/preferences"
-                element={<PageWithSteps page="preferences" />}
+                element={<Preferences onSendData={handlePrefersData} />}
               />
             </Routes>
 
@@ -122,6 +137,8 @@ function App() {
               isModalOpen={isModalOpen}
               personalLifeData={personalLifeData}
               habitationData={habitationData}
+              prefersData={prefersData}
+              familyData={familyData}
             />
           </RegistrationApiProvider>
         </Router>
@@ -160,6 +177,8 @@ const TelegramNavButton = ({
   isModalOpen,
   personalLifeData,
   habitationData,
+  prefersData,
+  familyData,
 }) => {
   const access_token = localStorage.getItem("access_token");
   const navigate = useNavigate();
@@ -167,15 +186,35 @@ const TelegramNavButton = ({
   const tg = window.Telegram?.WebApp;
   const { registrationData } = useRegistrationData();
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
+  useEffect(() => {
+    if (familyData) {
+      handleFamilySubmit();
+    }
+  }, [familyData]);
+  useEffect(() => {
+    if (prefersData) {
+      handlePrefersSubmit();
+    }
+  }, [prefersData]);
+  useEffect(() => {
+    if (habitationData) {
+      handleHabitationSubmit();
+    }
+  }, [habitationData]);
+  useEffect(() => {
+    if (personalLifeData) {
+      handlePersonalLifeSubmit();
+    }
+  }, [personalLifeData]);
 
   const handleFinalSubmit = async () => {
-    const dataToSend = {
-      ...registrationData,
-      habitation: habitationData || {},
-      personalLife: personalLifeData || {},
-    };
+    // const dataToSend = {
+    //   ...registrationData,
+    //   habitation: habitationData || {},
+    //   personalLife: personalLifeData || {},
+    // };
 
-    console.log("Данные для отправки:", dataToSend);
+    // console.log("Данные для отправки:", dataToSend);
 
     const requestOptions = {
       method: "POST",
@@ -220,13 +259,13 @@ const TelegramNavButton = ({
         throw new Error("Сеть ответила с ошибкой");
       }
       const result = await response.json();
-      console.log("Данные успешно отправлены:", result);
+      // console.log("Данные успешно отправлены:", result);
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
   };
 
-  const hadleHabitationSubmit = async () => {
+  const handleHabitationSubmit = async () => {
     const requestOptions = {
       method: "POST",
       headers: {
@@ -245,7 +284,57 @@ const TelegramNavButton = ({
         throw new Error("Сеть ответила с ошибкой");
       }
       const result = await response.json();
-      console.log("Данные успешно отправлены:", result);
+      // console.log("Данные успешно отправлены:", result);
+    } catch (error) {
+      console.error("Ошибка отправки данных:", error);
+    }
+  };
+
+  const handleFamilySubmit = async () => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(familyData || {}),
+    };
+
+    try {
+      const response = await fetch(
+        `${config.serverUrl}api/users.editProfile`,
+        requestOptions
+      );
+      if (!response.ok) {
+        throw new Error("Сеть ответила с ошибкой");
+      }
+      const result = await response.json();
+      // console.log("Данные успешно отправлены:", result);
+    } catch (error) {
+      console.error("Ошибка отправки данных:", error);
+    }
+  };
+
+  const handlePrefersSubmit = async () => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(prefersData || {}),
+    };
+
+    try {
+      const response = await fetch(
+        `${config.serverUrl}api/users.editProfile`,
+        requestOptions
+      );
+      if (!response.ok) {
+        throw new Error("Сеть ответила с ошибкой");
+      }
+      const result = await response.json();
+      // console.log("Данные успешно отправлены:", result);
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
@@ -278,7 +367,13 @@ const TelegramNavButton = ({
             handlePersonalLifeSubmit();
             break;
           case "/habitation":
-            hadleHabitationSubmit();
+            handleHabitationSubmit();
+            break;
+          case "/family":
+            handleFamilySubmit();
+            break;
+          case "/preferences":
+            handlePrefersSubmit();
             break;
           default:
             tg.MainButton.hide();

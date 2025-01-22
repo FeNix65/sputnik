@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Select,
   Input,
@@ -10,9 +10,9 @@ import {
 import "../assets/styles/GeneralStyle.css";
 
 const Preferences = ({ onSendData }) => {
-  const [religion, setReligion] = useState("");
-  const [familyStructure, setFamilyStructure] = useState("");
-  const [hobbies, setHobbies] = useState("");
+  const [religion, setReligion] = useState(null);
+  const [familyStructure, setFamilyStructure] = useState(null);
+  const [otherInfo, setOtherInfo] = useState(null);
 
   const religionMap = {
     Крестьянство: "christianity",
@@ -35,7 +35,7 @@ const Preferences = ({ onSendData }) => {
       prefers: {
         religion: religionMap[religion] || "",
         family_build_status: familyMap[familyStructure] || "",
-        other_info,
+        other_info: otherInfo,
       },
     };
     return data;
@@ -101,8 +101,8 @@ const Preferences = ({ onSendData }) => {
       >
         <Input
           placeholder="Ваши увлечения и хобби"
-          value={hobbies}
-          onChange={(e) => setHobbies(e.target.value)}
+          value={otherInfo}
+          onChange={(e) => setOtherInfo(e.target.value)}
         />
       </Section>
     </List>
