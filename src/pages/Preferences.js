@@ -30,19 +30,36 @@ const Preferences = ({ onSendData }) => {
     Отсутствует: "none",
   };
 
-  const prepareData = () => {
-    return {
-      religion: religionMap[religion] || "",
-      familyStructure: familyMap[familyStructure] || "",
-      hobbies,
+  const handleSave = () => {
+    const data = {
+      prefers: {
+        religion: religionMap[religion] || "",
+        family_build_status: familyMap[familyStructure] || "",
+        other_info,
+      },
     };
+    return data;
   };
 
   const handleSubmit = () => {
-    const data = prepareData();
+    const data = handleSave(); // Получаем данные из handleSave
     console.log("Отправляемые данные:", data);
-    // onSendData(data);
+    if (data) {
+      // Сохраняем данные в контексте
+      if (onSendData) onSendData(data);
+    }
   };
+
+  useEffect(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+
+    mainButton.onClick(handleSubmit);
+    mainButton.show();
+
+    return () => {
+      mainButton.offClick(handleSubmit);
+    };
+  }, [handleSubmit]);
 
   return (
     <List className="list">
@@ -88,7 +105,6 @@ const Preferences = ({ onSendData }) => {
           onChange={(e) => setHobbies(e.target.value)}
         />
       </Section>
-      <Button onClick={handleSubmit}>тестим</Button>
     </List>
   );
 };

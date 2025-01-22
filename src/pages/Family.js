@@ -34,20 +34,37 @@ const Family = ({ onSendData }) => {
     Сводные: "step",
   };
 
-  const prepareData = () => {
-    return {
-      status: statusMap[status] || "",
-      budget_management: budgetManagementMap[budgetManagement] || "",
-      siblings: siblingsMap[siblings] || "",
-      other_info: otherInfo,
+  const handleSave = () => {
+    const data = {
+      family: {
+        status: statusMap[status] || "",
+        budget_management: budgetManagementMap[budgetManagement] || "",
+        siblings: siblingsMap[siblings] || "",
+        other_info: otherInfo,
+      },
     };
+    return data;
   };
 
   const handleSubmit = () => {
-    const data = prepareData();
+    const data = handleSave();
     console.log("Отправляемые данные:", data);
-    // onSendData(data);
+    if (data) {
+      // Сохраняем данные в контексте
+      if (onSendData) onSendData(data);
+    }
   };
+
+  useEffect(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+
+    mainButton.onClick(handleSubmit);
+    mainButton.show();
+
+    return () => {
+      mainButton.offClick(handleSubmit);
+    };
+  }, [handleSubmit]);
 
   return (
     <List className="list">
@@ -100,7 +117,6 @@ const Family = ({ onSendData }) => {
           onChange={(e) => setOtherInfo(e.target.value)}
         />
       </Section>
-      <Button onClick={handleSubmit}>Тестируем</Button>
     </List>
   );
 };

@@ -7,7 +7,7 @@ const Habitation = ({ onSendData }) => {
   const [financialStatus, setFinancialStatus] = useState("");
   const [transferAbility, setTransferAbility] = useState("");
   const [automobile, setAutomobile] = useState("");
-  const [animals, setAnimals] = useState("");
+  const [animals, setAnimals] = useState([]);
 
   const statusMap = {
     "С родителями": "with_parents",
@@ -40,7 +40,7 @@ const Habitation = ({ onSendData }) => {
         financial_status: financialStatusMap[financialStatus] || "",
         transfer_ability: transferAbility === "Да" ? "yes" : "no",
         automobile: automobile === "Да" ? "yes" : "no",
-        animals: animalsMap[animals] || "",
+        animals: animals.map((animal) => animalsMap[animal] || ""),
       },
     };
     return data; // Возвращаем данные
@@ -133,7 +133,11 @@ const Habitation = ({ onSendData }) => {
         <Select
           placeholder="Наличие домашних животных"
           value={animals}
-          onChange={(e) => setAnimals(e.target.value)}
+          onChange={(e) =>
+            setAnimals(
+              [...e.target.selectedOptions].map((option) => option.value)
+            )
+          }
         >
           <option value="" disabled hidden>
             Наличие домашних животных

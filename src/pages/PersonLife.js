@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Radio,
   Cell,
@@ -22,16 +22,38 @@ const PersonalLife = ({ onSendData }) => {
   const handleSliderChange = (newValue) => {
     setValue(newValue); // Обновляем состояние значением слайдера
   };
-  const OnSendData = () => {
+  const handleSave = () => {
     const data = {
-      has_relationships: hasRelationships === "YES",
-      has_intimacy_relationships: hasIntimacyRelationships === "YES",
-      has_married: hasMarried === "YES",
-      child_count: value, // Количество детей
+      intimacy: {
+        has_relationships: hasRelationships === "YES",
+        has_intimacy_relationships: hasIntimacyRelationships === "YES",
+        has_married: hasMarried === "YES",
+        child_count: value, // Количество детей
+      },
     };
-    console.log("Отправляемые данные:", data); // Логируем перед отправкой
-    onSendData(data); // Вызов onSendData с данными
+    return data; // Возвращаем данные
   };
+
+  const handleSubmit = () => {
+    const data = handleSave(); // Получаем данные из handleSave
+    console.log("Отправляемые данные:", data);
+    if (data) {
+      // Сохраняем данные в контексте
+      if (onSendData) onSendData(data);
+    }
+  };
+
+  useEffect(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+
+    mainButton.onClick(handleSubmit);
+    mainButton.show();
+
+    return () => {
+      mainButton.offClick(handleSubmit);
+    };
+  }, [handleSubmit]);
+
   return (
     <List
       className="list"
