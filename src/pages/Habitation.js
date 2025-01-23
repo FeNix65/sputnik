@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Select, List, Section, Button } from "@telegram-apps/telegram-ui";
+import {
+  Select,
+  List,
+  Section,
+  Button,
+  Cell,
+  Radio,
+} from "@telegram-apps/telegram-ui";
 import "../assets/styles/GeneralStyle.css";
 
 const Habitation = ({ onSendData }) => {
   const [status, setStatus] = useState(null);
   const [financialStatus, setFinancialStatus] = useState(null);
   const [transferAbility, setTransferAbility] = useState(null);
-  const [automobile, setAutomobile] = useState(null);
+  const [hasAutomobile, setHasAutomobile] = useState(null);
   const [animals, setAnimals] = useState(null);
 
   const statusMap = {
@@ -36,10 +43,10 @@ const Habitation = ({ onSendData }) => {
   const handleSave = () => {
     const data = {
       living: {
-        status: statusMap[status] || "",
+        status: statusMap[status] || null,
         financial_status: financialStatusMap[financialStatus] || "",
-        transfer_ability: transferAbility === "Да" ? "yes" : "no",
-        automobile: automobile === "Да" ? "yes" : "no",
+        transfer_ability: transferAbility === "YES",
+        automobile: hasAutomobile === "YES",
         animals: animals.map((animal) => animalsMap[animal] || ""),
       },
     };
@@ -106,7 +113,42 @@ const Habitation = ({ onSendData }) => {
           <option>Пиздец</option>
         </Select>
 
-        <Select
+        <Section header="Есть ли у вас автомобиль">
+          <form className="TransferAbility">
+            <Section>
+              <Cell
+                className="setTransferAbility__item"
+                before={
+                  <Radio
+                    name="transferAbility"
+                    value="NO"
+                    checked={transferAbility === "NO"}
+                    onChange={() => setTransferAbility("NO")}
+                  />
+                }
+              >
+                Нет
+              </Cell>
+            </Section>
+            <Section>
+              <Cell
+                className="TransferAbility__item"
+                before={
+                  <Radio
+                    name="transferAbility"
+                    value="NO"
+                    checked={transferAbility === "YES"}
+                    onChange={() => setTransferAbility("YES")}
+                  />
+                }
+              >
+                Да
+              </Cell>
+            </Section>
+          </form>
+        </Section>
+
+        {/* <Select
           placeholder="Возможен ли переезд"
           value={transferAbility}
           onChange={(e) => setTransferAbility(e.target.value)}
@@ -116,19 +158,42 @@ const Habitation = ({ onSendData }) => {
           </option>
           <option>Да</option>
           <option>Нет</option>
-        </Select>
+        </Select> */}
 
-        <Select
-          placeholder="Наличие автомобиля"
-          value={automobile}
-          onChange={(e) => setAutomobile(e.target.value)}
-        >
-          <option value="" disabled hidden>
-            Наличие автомобиля
-          </option>
-          <option>Да</option>
-          <option>Нет</option>
-        </Select>
+        <Section header="Есть ли у вас автомобиль">
+          <form className="automobile">
+            <Section>
+              <Cell
+                className="automobile__item"
+                before={
+                  <Radio
+                    name="hasautomobile"
+                    value="NO"
+                    checked={hasAutomobile === "NO"}
+                    onChange={() => setHasAutomobile("NO")}
+                  />
+                }
+              >
+                Нет
+              </Cell>
+            </Section>
+            <Section>
+              <Cell
+                className="automobile__item"
+                before={
+                  <Radio
+                    name="hasautomobile"
+                    value="NO"
+                    checked={hasAutomobile === "YES"}
+                    onChange={() => setHasAutomobile("YES")}
+                  />
+                }
+              >
+                Да
+              </Cell>
+            </Section>
+          </form>
+        </Section>
 
         <Select
           placeholder="Наличие домашних животных"

@@ -133,7 +133,7 @@ const EndOfRegistration = ({ onSubmit }) => {
           multiple={false}
           onChange={handleFileChange}
         />
-        <img src={file} alt="Profile" width={96} height={96} />
+        <img src={file} alt="Profile" width={720} height={1200} />
       </Section>
       <Section
         footer={

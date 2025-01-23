@@ -12,13 +12,13 @@ const Family = ({ onSendData }) => {
   const [status, setStatus] = useState(null);
   const [budgetManagement, setBudgetManagement] = useState(null);
   const [siblings, setSiblings] = useState(null);
-  const [otherInfo, setOtherInfo] = useState(null);
+  const [otherInfo, setOtherInfo] = useState("");
 
   // Маппинг для статуса семьи, кто распоряжается бюджетом и наличие братьев/сестер
   const statusMap = {
     "Полная семья": "full",
     Разведены: "parted",
-    "Разведены и умерли": "dead_parted",
+    "Неполная семья": "dead_parted",
     Неизвестно: "unknown",
   };
 
@@ -79,7 +79,7 @@ const Family = ({ onSendData }) => {
           </option>
           <option>Полная семья</option>
           <option>Разведены</option>
-          <option>Разведены и умерли</option>
+          <option>Неполная семья</option>
           <option>Неизвестно</option>
         </Select>
         <Divider />
