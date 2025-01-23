@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Select,
   Input,
@@ -30,7 +30,7 @@ const Preferences = ({ onSendData }) => {
     Отсутствует: "none",
   };
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const data = {
       prefers: {
         religion: religionMap[religion] || "",
@@ -39,25 +39,35 @@ const Preferences = ({ onSendData }) => {
       },
     };
     return data;
-  };
+  }, [religion, familyStructure, otherInfo]);
 
-  const handleSubmit = () => {
-    const data = handleSave(); // Получаем данные из handleSave
-    console.log("Отправляемые данные:", data);
-    if (data) {
-      // Сохраняем данные в контексте
-      if (onSendData) onSendData(data);
+  const handleSubmit = useCallback(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+    mainButton.disable(); // Отключаем кнопку, чтобы предотвратить повторные клики
+
+    try {
+      const data = handleSave();
+      console.log("Отправляемые данные:", data);
+
+      if (data && onSendData) {
+        onSendData(data); // Сохраняем данные в контексте
+      }
+    } catch (error) {
+      console.error("Ошибка при отправке данных:", error);
+    } finally {
+      mainButton.enable(); // Включаем кнопку в любом случае
     }
-  };
+  }, [handleSave, onSendData]); // зависимости для мемоизации
 
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
 
     mainButton.onClick(handleSubmit);
-    mainButton.show();
+    mainButton.show(); // Показываем кнопку
 
     return () => {
-      mainButton.offClick(handleSubmit);
+      mainButton.offClick(handleSubmit); // Убираем обработчик при размонтировании
+      mainButton.hide(); // Прячем кнопку
     };
   }, [handleSubmit]);
 
@@ -65,6 +75,7 @@ const Preferences = ({ onSendData }) => {
     <List className="list">
       <Section header="Предпочтения">
         <Select
+          className="Select"
           placeholder="Религия"
           value={religion}
           onChange={(e) => setReligion(e.target.value)}
@@ -81,6 +92,7 @@ const Preferences = ({ onSendData }) => {
         </Select>
         <Divider />
         <Select
+          className="Select"
           placeholder="Предпочтительный семейный строй"
           value={familyStructure}
           onChange={(e) => setFamilyStructure(e.target.value)}

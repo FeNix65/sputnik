@@ -1,21 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import config from "../config.js";
-import { useData } from "../States/RegistrationApi.js";
+import { RegistrationApiProvider } from "../States/RegistrationApi";
 
-// import { useTokens } from "../States/TokenContext";
-
-const Initializator = () => {
-  const {
-    setCities,
-    setStudyPlaces,
-    setProfessions,
-    setLanguages,
-    setUserInfo,
-  } = useData();
+const Initializator = ({ children }) => {
+  const [cities, setCities] = useState([]);
+  const [studyPlaces, setStudyPlaces] = useState([]);
+  const [professions, setProfessions] = useState([]);
+  const [languages, setLanguages] = useState([]);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const tg = window.Telegram?.WebApp;
+  // const navigate = useNavigate();
 
   const fetchData = async (url, setter, mapper = (data) => data) => {
     try {
@@ -24,10 +18,11 @@ const Initializator = () => {
       if (result.ok) {
         setter(mapper(result));
       } else {
-        console.error("Неверный ответ сервера", result);
+        throw new Error("Неверный ответ сервера");
       }
     } catch (error) {
       console.error(`Ошибка при запросе ${url}: `, error);
+      setError(`Ошибка загрузки данных: ${error.message}`);
     }
   };
 
@@ -36,7 +31,6 @@ const Initializator = () => {
       const response = await fetch(`${config.serverUrl}api/server.ping`, {
         method: "POST",
       });
-      console.log(response);
       if (!response.ok) throw new Error("Сервер недоступен");
     } catch (error) {
       setError("Ошибка: Сервер недоступен");
@@ -47,34 +41,27 @@ const Initializator = () => {
     try {
       const initData = window.Telegram.WebApp.initData;
       const urlParams = new URLSearchParams(initData);
-      console.log(
-        "url",
-        `${config.serverUrl}api/auth.telegram?${urlParams.toString()}`
-      );
       const response = await fetch(
         `${config.serverUrl}api/auth.telegram?${urlParams.toString()}`,
-
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // body: JSON.stringify({ initData }),
+          headers: { "Content-Type": "application/json" },
         }
       );
 
-      let data = await response.json();
-
+      const data = await response.json();
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("refresh_token", data.refresh_token);
     } catch (error) {
-      setError(`Ошибка: Не удалось получить токены: ${error}`);
+      setError(`Ошибка: Не удалось получить токены`);
+      console.error(error);
     }
   };
 
   const getUserInfo = async () => {
     try {
-      let access_token = localStorage.getItem("access_token");
+      const access_token = localStorage.getItem("access_token");
+      if (!access_token) throw new Error("Отсутствует access_token");
 
       const response = await fetch(`${config.serverUrl}api/users.getMe`, {
         method: "GET",
@@ -83,8 +70,9 @@ const Initializator = () => {
           "Content-Type": "application/json",
         },
       });
+
       const data = await response.json();
-      handleUserState(data.state);
+      // handleUserState(data.state);
     } catch (error) {
       setError(
         `Ошибка: Не удалось получить информацию о пользователе: ${error}`
@@ -93,78 +81,79 @@ const Initializator = () => {
     }
   };
 
-  const handleUserState = (state) => {
-    switch (state) {
-      case "unregistered":
-        navigate("/create-profile");
-        break;
-      case "active":
-        navigate("/profiles");
-        break;
-      case "inactive":
-        navigate("/profile-deactivated");
-        break;
-      case "banned":
-        navigate("/banned");
-        break;
-      default:
-        setError("Ошибка: Неверное состояние пользователя");
-      // tg.close();
-    }
-  };
-  //эта хуйня пригодиться
-
-  //   const refreshToken = async () => {
-  //     try {
-  //       await fetch("https://example.com/api/auth.refresh");
-  //     } catch (error) {
-  //       setError("Ошибка: Не удалось обновить токены");
-  //     }
-  //   };
+  // const handleUserState = (state) => {
+  //   switch (state) {
+  //     case "unregistered":
+  //       navigate("/create-profile");
+  //       break;
+  //     case "active":
+  //       navigate("/profiles");
+  //       break;
+  //     case "inactive":
+  //       navigate("/profile-deactivated");
+  //       break;
+  //     case "banned":
+  //       navigate("/banned");
+  //       break;
+  //     default:
+  //       setError("Ошибка: Неверное состояние пользователя");
+  //   }
+  // };
 
   useEffect(() => {
     const initializeApp = async () => {
-      await pingServer();
-      if (!error) await getTokens();
-      if (!error) await getUserInfo();
-      if (!error) {
-        fetchData(
+      try {
+        await pingServer();
+        await getTokens();
+        await getUserInfo();
+        await fetchData(
           `${config.serverUrl}api/server.getCities`,
           setCities,
           (data) => data.cities
         );
-        fetchData(
+        await fetchData(
           `${config.serverUrl}api/server.getStudyPlaces`,
           setStudyPlaces
         );
-        fetchData(
+        await fetchData(
           `${config.serverUrl}api/server.getProfessions`,
           setProfessions,
           (data) => data.professions.map((name, index) => ({ id: index, name }))
         );
-        fetchData(
+        await fetchData(
           `${config.serverUrl}api/server.getLangs`,
           setLanguages,
           (data) =>
-            data.languages.map((lang) => ({ value: lang.id, label: lang.name }))
+            data.languages.map((lang) => ({
+              value: lang.id,
+              label: lang.name,
+            }))
         );
+      } catch (e) {
+        console.error(e);
+        setError("Ошибка инициализации приложения");
       }
     };
 
     initializeApp();
-
-    // const refreshTokenInterval = setInterval(() => {
-    //   refreshToken();
-    // }, 15 * 60 * 1000);
-
-    // return () => clearInterval(refreshTokenInterval);
-  }, [error]);
+  }, []);
 
   if (error) {
     return <div>{error}</div>;
   }
 
-  return null;
+  return (
+    <RegistrationApiProvider
+      value={{
+        cities,
+        studyPlaces,
+        professions,
+        languages,
+      }}
+    >
+      {children}
+    </RegistrationApiProvider>
+  );
 };
 
 export default Initializator;

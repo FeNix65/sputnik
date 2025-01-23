@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Accordion,
   List,
@@ -13,62 +13,46 @@ import config from "../config.js";
 import { useRegistrationData } from "../States/RegistrationData";
 import "../assets/styles/GeneralStyle.css";
 
-// const handleSubmit = () => {
-//   const { updateRegistrationData } = useRegistrationData();
-//   const data = {
-//     speciality: {
-//       profession: selectedProfession,
-//       place_of_study: selectedStudyPlace,
-//       languages: selectedLanguages.map((lang) => lang.value),
-//       other_info: otherInfo,
-//     },
-//   };
-
-//   updateRegistrationData({ education: data });
-// };
-
 const EducationPage = ({ onSubmit }) => {
   const { registrationData, setRegistrationData } = useRegistrationData();
-  // const { tokens } = useTokens();
   const [expandedAccordion, setExpandedAccordion] = useState(null);
 
-  // Состояния для мест обучения
   const [studyPlaces, setStudyPlaces] = useState({});
   const [selectedStudyPlace, setSelectedStudyPlace] = useState(null);
   const [searchStudyPlace, setSearchStudyPlace] = useState("");
   const [isStudyPlaceModalOpen, setIsStudyPlaceModalOpen] = useState(false);
 
-  // Состояния для профессий
   const [professions, setProfessions] = useState([]);
   const [selectedProfession, setSelectedProfession] = useState(null);
   const [searchProfession, setSearchProfession] = useState("");
   const [isProfessionModalOpen, setIsProfessionModalOpen] = useState(false);
 
-  // Состояния для языков
   const [languages, setLanguages] = useState([]);
   const [languagesTouched, setLanguagesTouched] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
 
   const [otherInfo, setOtherInfo] = useState(null);
 
-  const handleAccordionChange = (id) => {
+  const handleAccordionChange = useCallback((id) => {
     setExpandedAccordion((prev) => (prev === id ? null : id));
-  };
+  }, []);
 
-  // Получение данных с сервера
-  const fetchData = async (url, setter, mapper = (data) => data) => {
-    try {
-      const response = await fetch(url);
-      const result = await response.json();
-      if (result.ok) {
-        setter(mapper(result));
-      } else {
-        console.error("Неверный ответ сервера", result);
+  const fetchData = useCallback(
+    async (url, setter, mapper = (data) => data) => {
+      try {
+        const response = await fetch(url);
+        const result = await response.json();
+        if (result.ok) {
+          setter(mapper(result));
+        } else {
+          console.error("Неверный ответ сервера", result);
+        }
+      } catch (error) {
+        console.error(`Ошибка при запросе ${url}: `, error);
       }
-    } catch (error) {
-      console.error(`Ошибка при запросе ${url}: `, error);
-    }
-  };
+    },
+    []
+  );
 
   useEffect(() => {
     fetchData(`${config.serverUrl}api/server.getStudyPlaces`, (data) =>
@@ -84,10 +68,9 @@ const EducationPage = ({ onSubmit }) => {
         data.languages.map((lang) => ({ value: lang.id, label: lang.name }))
       )
     );
-  }, []);
+  }, [fetchData]);
 
-  // Функция для сохранения данных в контекст
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     setRegistrationData({
       ...registrationData,
       speciality: {
@@ -101,12 +84,17 @@ const EducationPage = ({ onSubmit }) => {
         other_info: otherInfo,
       },
     });
-  };
-  const handleSubmit = () => {
-    // console.log("Профессия:", selectedProfession);
-    // console.log("Место обучения:", selectedStudyPlace);
-    // console.log("Языки:", selectedLanguages);
-    // console.log("Прочая информация:", otherInfo);
+  }, [
+    registrationData,
+    selectedProfession,
+    selectedStudyPlace,
+    selectedLanguages,
+    languagesTouched,
+    otherInfo,
+    setRegistrationData,
+  ]);
+
+  const handleSubmit = useCallback(() => {
     const data = {
       // speciality: {
       //   profession: selectedProfession,
@@ -116,9 +104,15 @@ const EducationPage = ({ onSubmit }) => {
       // },
     };
     handleSave();
-    // console.log(JSON.stringify(data, null, 2));
     if (onSubmit) onSubmit(data);
-  };
+  }, [
+    handleSave,
+    selectedProfession,
+    selectedStudyPlace,
+    selectedLanguages,
+    otherInfo,
+    onSubmit,
+  ]);
 
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
@@ -133,7 +127,6 @@ const EducationPage = ({ onSubmit }) => {
 
   return (
     <List className="list">
-      {/* Модалка для профессий */}
       <Section header="Специализация">
         <Modal
           style={{

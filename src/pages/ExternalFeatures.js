@@ -9,27 +9,17 @@ import {
 import "../assets/styles/ExternalFeatures.css";
 import { useRegistrationData } from "../States/RegistrationData";
 import "../assets/styles/GeneralStyle.css";
-// import { useTokens } from "../States/TokenContext"; // Импортируем useTokens
 
-const ExternalFeatures = (onSubmit) => {
-  // const { tokens } = useTokens();
-  // useEffect(() => {
-  //   // Вставить логику, которая использует токены, если они есть
-  //   if (tokens) {
-  //     console.log("Токены на странице :", tokens);
-  //   } else {
-  //     console.log("Токенов на странице  нет");
-  //   }
-  // }, [tokens]);
+const ExternalFeatures = ({ onSubmit }) => {
   const { registrationData, setRegistrationData } = useRegistrationData();
   const [appearanceIssues] = useState([
     { value: "piercing", label: "пирсинг" },
     { value: "tattoos", label: "татуировки" },
     { value: "other", label: "другое" },
   ]);
-
   const [selectedAppearanceIssues, setSelectedAppearanceIssues] = useState([]);
   const [appearanceIssuesTouched, setAppearanceIssuesTouched] = useState(false);
+
   const [bad_practices] = useState([
     { value: "smoking", label: "курение" },
     { value: "alcohol", label: "алкоголь" },
@@ -38,6 +28,7 @@ const ExternalFeatures = (onSubmit) => {
   ]);
   const [selectedBadHabits, setSelectedBadHabits] = useState([]);
   const [badHabitsTouched, setBadHabitsTouched] = useState(false);
+
   const [height, setHeight] = useState(null);
   const [weight, setWeight] = useState(null);
   const [physique, setPhysique] = useState(null);
@@ -62,13 +53,11 @@ const ExternalFeatures = (onSubmit) => {
         other_info: otherInfo,
       },
     };
-    if (data) {
-      handleSave();
-      if (onSubmit) onSubmit(data);
-    }
+    handleSave(data);
+    if (onSubmit) onSubmit(data);
   };
 
-  const handleSave = () => {
+  const handleSave = (data) => {
     setRegistrationData({
       ...registrationData,
       appearance: {
@@ -120,6 +109,7 @@ const ExternalFeatures = (onSubmit) => {
           />
         </form>
         <Select
+          className="Select"
           placeholder="Телосложение"
           value={physique}
           onChange={(e) => setPhysique(e.target.value)}
@@ -132,6 +122,7 @@ const ExternalFeatures = (onSubmit) => {
           <option value="fat">жирный</option>
         </Select>
       </Section>
+
       <Section header="Особенности внешности">
         <Multiselect
           options={appearanceIssues}
@@ -143,6 +134,7 @@ const ExternalFeatures = (onSubmit) => {
           sectionHeader="Особенности внешности"
         />
       </Section>
+
       <Section header="Вредные привычки">
         <Multiselect
           options={bad_practices}
@@ -154,6 +146,7 @@ const ExternalFeatures = (onSubmit) => {
           sectionHeader="Вредные привычки"
         />
       </Section>
+
       <Section
         header="Прочая информация"
         footer="Например: Лазерная коррекция зрения, ношу линзы"

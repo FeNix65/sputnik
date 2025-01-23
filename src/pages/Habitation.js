@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Select,
   List,
@@ -6,6 +6,7 @@ import {
   Button,
   Cell,
   Radio,
+  Multiselect,
 } from "@telegram-apps/telegram-ui";
 import "../assets/styles/GeneralStyle.css";
 
@@ -14,13 +15,23 @@ const Habitation = ({ onSendData }) => {
   const [financialStatus, setFinancialStatus] = useState(null);
   const [transferAbility, setTransferAbility] = useState(null);
   const [hasAutomobile, setHasAutomobile] = useState(null);
-  const [animals, setAnimals] = useState(null);
+  // const [animals, setAnimals] = useState(null);
+
+  const [animals] = useState([
+    { value: "cat", label: "Кошка" },
+    { value: "dog", label: "Собака" },
+    { value: "other", label: "Другое" },
+    { value: "farm", label: "Фермерские животные" },
+  ]);
+
+  const [selectedAnimals, setSelectedAnimals] = useState([]);
+  const [animalsTouched, setAnimalsTouched] = useState(false);
 
   const statusMap = {
     "С родителями": "with_parents",
     "Собственная квартира": "own_apartment",
     "Собственный дом": "own_house",
-    "Общий appartement": "shared_apartment",
+    Общежитие: "shared_apartment",
     Аренда: "rent",
     Другое: "other",
   };
@@ -40,36 +51,50 @@ const Habitation = ({ onSendData }) => {
     "Фермерские животные": "farm",
   };
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const data = {
       living: {
         status: statusMap[status] || null,
-        financial_status: financialStatusMap[financialStatus] || "",
+        financial_status: financialStatusMap[financialStatus] || null,
         transfer_ability: transferAbility === "YES",
         automobile: hasAutomobile === "YES",
-        animals: animals.map((animal) => animalsMap[animal] || ""),
+        animals: animalsTouched
+          ? selectedAnimals.length > 0
+            ? selectedAnimals.map((item) => animalsMap[item.value])
+            : []
+          : null,
       },
     };
     return data; // Возвращаем данные
-  };
+  }, [status, financialStatus, transferAbility, hasAutomobile, animals]);
 
-  const handleSubmit = () => {
-    const data = handleSave(); // Получаем данные из handleSave
-    console.log("Отправляемые данные:", data);
-    if (data) {
-      // Сохраняем данные в контексте
-      if (onSendData) onSendData(data);
+  const handleSubmit = useCallback(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+    mainButton.disable(); // Отключаем кнопку, чтобы предотвратить повторные клики
+
+    try {
+      const data = handleSave();
+      console.log("Отправляемые данные:", data);
+
+      if (data && onSendData) {
+        onSendData(data); // Сохраняем данные в контексте
+      }
+    } catch (error) {
+      console.error("Ошибка при отправке данных:", error);
+    } finally {
+      mainButton.enable(); // Включаем кнопку в любом случае
     }
-  };
+  }, [handleSave, onSendData]); // зависимости для мемоизации
 
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
 
     mainButton.onClick(handleSubmit);
-    mainButton.show();
+    mainButton.show(); // Показываем кнопку
 
     return () => {
-      mainButton.offClick(handleSubmit);
+      mainButton.offClick(handleSubmit); // Убираем обработчик при размонтировании
+      mainButton.hide(); // Прячем кнопку
     };
   }, [handleSubmit]);
 
@@ -83,6 +108,10 @@ const Habitation = ({ onSendData }) => {
     <List className="list">
       <Section header="Информация о проживании">
         <Select
+          className="Select"
+          // style={{
+          //   background: "var(--tgui--section_bg_color)",
+          // }}
           placeholder="Где живете"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -93,12 +122,13 @@ const Habitation = ({ onSendData }) => {
           <option>С родителями</option>
           <option>Собственная квартира</option>
           <option>Собственный дом</option>
-          <option>Общий appartement</option>
+          <option>Общежитие</option>
           <option>Аренда</option>
           <option>Другое</option>
         </Select>
 
         <Select
+          className="Select"
           placeholder="Финансовое положение"
           value={financialStatus}
           onChange={(e) => setFinancialStatus(e.target.value)}
@@ -114,10 +144,10 @@ const Habitation = ({ onSendData }) => {
         </Select>
 
         <Section header="Есть ли у вас автомобиль">
-          <form className="TransferAbility">
+          <form className="yesno">
             <Section>
               <Cell
-                className="setTransferAbility__item"
+                className="yesno__item"
                 before={
                   <Radio
                     name="transferAbility"
@@ -132,7 +162,7 @@ const Habitation = ({ onSendData }) => {
             </Section>
             <Section>
               <Cell
-                className="TransferAbility__item"
+                className="yesno__item"
                 before={
                   <Radio
                     name="transferAbility"
@@ -161,10 +191,10 @@ const Habitation = ({ onSendData }) => {
         </Select> */}
 
         <Section header="Есть ли у вас автомобиль">
-          <form className="automobile">
+          <form className="yesno">
             <Section>
               <Cell
-                className="automobile__item"
+                className="yesno__item"
                 before={
                   <Radio
                     name="hasautomobile"
@@ -179,7 +209,7 @@ const Habitation = ({ onSendData }) => {
             </Section>
             <Section>
               <Cell
-                className="automobile__item"
+                className="yesno__item"
                 before={
                   <Radio
                     name="hasautomobile"
@@ -195,7 +225,19 @@ const Habitation = ({ onSendData }) => {
           </form>
         </Section>
 
-        <Select
+        <Section header="Наличие домашних животных">
+          <Multiselect
+            options={animals}
+            value={selectedAnimals}
+            onChange={(selected) => {
+              setSelectedAnimals(selected);
+              setAnimalsTouched(true);
+            }}
+            sectionHeader="Вредные привычки"
+          />
+        </Section>
+
+        {/* <Select
           placeholder="Наличие домашних животных"
           value={animals}
           onChange={(e) =>
@@ -211,7 +253,7 @@ const Habitation = ({ onSendData }) => {
           <option>Собака</option>
           <option>Другое</option>
           <option>Фермерские животные</option>
-        </Select>
+        </Select> */}
       </Section>
     </List>
   );

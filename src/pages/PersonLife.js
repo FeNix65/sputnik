@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Radio,
   Cell,
@@ -10,6 +10,7 @@ import {
   IconContainer,
 } from "@telegram-apps/telegram-ui";
 import "../assets/styles/GeneralStyle.css";
+import "../assets/styles/PersonalLife.css";
 
 const PersonalLife = ({ onSendData }) => {
   const [hasRelationships, setHasRelationships] = useState(null);
@@ -22,7 +23,7 @@ const PersonalLife = ({ onSendData }) => {
   const handleSliderChange = (newValue) => {
     setValue(newValue); // Обновляем состояние значением слайдера
   };
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const data = {
       intimacy: {
         has_relationships: hasRelationships === "YES",
@@ -32,25 +33,34 @@ const PersonalLife = ({ onSendData }) => {
       },
     };
     return data; // Возвращаем данные
-  };
+  }, [hasRelationships, hasIntimacyRelationships, hasMarried, value]); // Зависимости для мемоизации
+  const handleSubmit = useCallback(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+    mainButton.disable(); // Отключаем кнопку, чтобы предотвратить повторные клики
 
-  const handleSubmit = () => {
-    const data = handleSave(); // Получаем данные из handleSave
-    console.log("Отправляемые данные:", data);
-    if (data) {
-      // Сохраняем данные в контексте
-      if (onSendData) onSendData(data);
+    try {
+      const data = handleSave();
+      console.log("Отправляемые данные:", data);
+
+      if (data && onSendData) {
+        onSendData(data); // Сохраняем данные в контексте
+      }
+    } catch (error) {
+      console.error("Ошибка при отправке данных:", error);
+    } finally {
+      mainButton.enable(); // Включаем кнопку в любом случае
     }
-  };
+  }, [handleSave, onSendData]); // зависимости для мемоизации
 
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
 
     mainButton.onClick(handleSubmit);
-    mainButton.show();
+    mainButton.show(); // Показываем кнопку
 
     return () => {
-      mainButton.offClick(handleSubmit);
+      mainButton.offClick(handleSubmit); // Убираем обработчик при размонтировании
+      mainButton.hide(); // Прячем кнопку
     };
   }, [handleSubmit]);
 
@@ -63,11 +73,11 @@ const PersonalLife = ({ onSendData }) => {
         Личная жизнь
       </Headline>
 
-      <Section header="БЫЛИ ЛИ У ВАС ОТНОШЕНИЯ">
-        <form className="relationships">
+      <Section className="" header="БЫЛИ ЛИ У ВАС ОТНОШЕНИЯ">
+        <form className="yesno">
           <Section>
             <Cell
-              className="relationships__item"
+              className="yesno__item"
               before={
                 <Radio
                   name="hasRelationships"
@@ -82,7 +92,7 @@ const PersonalLife = ({ onSendData }) => {
           </Section>
           <Section>
             <Cell
-              className="relationships__item"
+              className="yesno__item"
               before={
                 <Radio
                   name="hasRelationships"
@@ -99,10 +109,10 @@ const PersonalLife = ({ onSendData }) => {
       </Section>
 
       <Section header="БЫЛИ ЛИ У ВАС ПОЛОВЫЕ ОТНОШЕНИЯ">
-        <form className="relationships">
+        <form className="yesno">
           <Section>
             <Cell
-              className="relationships__item"
+              className="yesno__item"
               before={
                 <Radio
                   name="hasIntimacyRelationships"
@@ -117,7 +127,7 @@ const PersonalLife = ({ onSendData }) => {
           </Section>
           <Section>
             <Cell
-              className="relationships__item"
+              className="yesno__item"
               before={
                 <Radio
                   name="hasIntimacyRelationships"
@@ -134,10 +144,10 @@ const PersonalLife = ({ onSendData }) => {
       </Section>
 
       <Section header="БЫЛИ ЛИ ВЫ ЗАМУЖЕМ">
-        <form className="relationships">
+        <form className="yesno">
           <Section>
             <Cell
-              className="relationships__item"
+              className="yesno__item"
               before={
                 <Radio
                   name="hasMarried"
@@ -152,7 +162,7 @@ const PersonalLife = ({ onSendData }) => {
           </Section>
           <Section>
             <Cell
-              className="relationships__item"
+              className="yesno__item"
               before={
                 <Radio
                   name="hasMarried"

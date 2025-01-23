@@ -9,12 +9,10 @@ import {
 import "../assets/styles/EndOfRegistration.css";
 import { useRegistrationData } from "../States/RegistrationData.js";
 import "../assets/styles/GeneralStyle.css";
-
 import config from "../config.js";
 
 const EndOfRegistration = ({ onSubmit }) => {
   const [error, setError] = useState(null);
-
   const [file, setFile] = useState(null);
   const { registrationData, setRegistrationData } = useRegistrationData();
 
@@ -24,24 +22,22 @@ const EndOfRegistration = ({ onSubmit }) => {
       setFile(null);
       return;
     }
-    if (selectedFile) {
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        console.error("Файл превышает максимальный размер 10 МБ.");
-        return;
-      }
-
-      const img = new Image();
-      img.src = URL.createObjectURL(selectedFile);
-
-      img.onload = () => {
-        if (img.width != 720 || img.height != 1280) {
-          console.error("Разрешение изображения превышает 720x1280.");
-        } else {
-          setFile(selectedFile);
-          console.log("Выбранный файл:", selectedFile);
-        }
-      };
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      console.error("Файл превышает максимальный размер 10 МБ.");
+      return;
     }
+
+    const img = new Image();
+    img.src = URL.createObjectURL(selectedFile);
+
+    img.onload = () => {
+      if (img.width !== 720 || img.height !== 1280) {
+        console.error("Разрешение изображения превышает 720x1280.");
+      } else {
+        setFile(selectedFile);
+        console.log("Выбранный файл:", selectedFile);
+      }
+    };
   };
 
   const handleSave = () => {
@@ -53,24 +49,7 @@ const EndOfRegistration = ({ onSubmit }) => {
       ...registrationData,
       profilePicture: file,
     });
-
-    // Добавляем файл в данные регистрации
-    // setRegistrationData((prevData) => ({
-    //   ...prevData,
-
-    // }));
-
-    // setRegistrationData({
-    //   ...registrationData,
-    //   profilePicture: file,
-    //   //
-    // });
-    // console.log("Данные регистрации после сохранения файла:", {
-    //   ...registrationData,
-    //   profilePicture: file,
-    // });
   };
-  // console.log("фотка:", prevData);
 
   const UploadProfilePicture = async () => {
     if (!file) {
@@ -91,34 +70,38 @@ const EndOfRegistration = ({ onSubmit }) => {
           },
         }
       );
-      console.log(response);
       if (!response.ok) throw new Error("Сервер недоступен");
       const result = await response.json();
       console.log("Результат загрузки:", result);
       return result;
     } catch (error) {
+      console.error("Ошибка загрузки файла:", error);
       setError("Ошибка: Сервер недоступен");
       throw error;
     }
   };
 
   const handleSubmit = async () => {
-    const data = {};
-    const uploadPhotoPromise = UploadProfilePicture();
-    const sendProfileDataPromise = handleSave();
-    await Promise.all([uploadPhotoPromise, sendProfileDataPromise]);
+    try {
+      const uploadPhotoPromise = UploadProfilePicture();
+      const sendProfileDataPromise = handleSave();
+      await Promise.all([uploadPhotoPromise, sendProfileDataPromise]);
 
-    if (onSubmit) onSubmit(data);
+      if (onSubmit) onSubmit();
+    } catch (error) {
+      console.error("Ошибка при отправке данных:", error);
+    }
   };
+
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
 
     mainButton.onClick(handleSubmit);
     mainButton.show();
 
-    return () => {
-      mainButton.offClick(handleSubmit);
-    };
+    // return () => {
+    //   mainButton.offClick(handleSubmit);
+    // };
   }, [handleSubmit]);
 
   return (
@@ -133,7 +116,14 @@ const EndOfRegistration = ({ onSubmit }) => {
           multiple={false}
           onChange={handleFileChange}
         />
-        <img src={file} alt="Profile" width={720} height={1200} />
+        {file && (
+          <img
+            src={URL.createObjectURL(file)}
+            alt="Profile"
+            width={96}
+            height={96}
+          />
+        )}
       </Section>
       <Section
         footer={

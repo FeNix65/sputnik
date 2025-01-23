@@ -6,15 +6,13 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { AppRoot, Button } from "@telegram-apps/telegram-ui";
+import { AppRoot } from "@telegram-apps/telegram-ui";
 import Initializator from "./components/Initializator.js";
-import { RegistrationApiProvider } from "./States/RegistrationApi.js";
-
+// import { RegistrationApiProvider } from "./States/RegistrationApi.js";
 import {
   RegistrationDataProvider,
   useRegistrationData,
 } from "./States/RegistrationData";
-
 import StartScreen from "./pages/StartScreen";
 import GeneralInfo from "./pages/GeneralInfo";
 import EducationPage from "./pages/Education";
@@ -31,7 +29,6 @@ import config from "./config.js";
 
 function App() {
   const tg = window.Telegram?.WebApp;
-  const BackButton = tg?.BackButton;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -64,27 +61,14 @@ function App() {
     if (tg) {
       tg.ready();
       tg.MainButton.text = "Создать профиль";
-      tg.MainButton.show();
-
-      if (BackButton) {
-        BackButton.show();
-        BackButton.onClick(() => {
-          BackButton.hide();
-        });
-
-        tg.onEvent("backButtonClicked", () => {
-          console.log("Back button clicked!");
-        });
-      }
     }
-  }, [tg, BackButton]);
+  }, [tg]);
 
   return (
     <RegistrationDataProvider>
       <AppRoot>
-        <Router>
-          <RegistrationApiProvider>
-            <Initializator />
+        <Initializator>
+          <Router>
             <Routes>
               <Route path="/" element={<StartScreen />} />
               <Route
@@ -103,17 +87,14 @@ function App() {
                 path="/end-of-registration"
                 element={<PageWithSteps page="end-of-registration" />}
               />
-              <Route
-                path="/settings"
-                element={<PageWithSteps page="settings" />}
-              />
+              <Route path="/settings" element={<Settings />} />
               <Route
                 path="/person-life"
                 element={<PersonLife onSendData={handlePersonalLifeData} />}
               />
               <Route
                 path="/family"
-                element={<Family onSendData={handleFamilyData} />}
+                element={<Family onSendData={handleFamilyData} page="family" />}
               />
               <Route
                 path="/habitation"
@@ -140,8 +121,8 @@ function App() {
               prefersData={prefersData}
               familyData={familyData}
             />
-          </RegistrationApiProvider>
-        </Router>
+          </Router>
+        </Initializator>
       </AppRoot>
     </RegistrationDataProvider>
   );
@@ -186,21 +167,25 @@ const TelegramNavButton = ({
   const tg = window.Telegram?.WebApp;
   const { registrationData } = useRegistrationData();
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
+
   useEffect(() => {
     if (familyData) {
       handleFamilySubmit();
     }
   }, [familyData]);
+
   useEffect(() => {
     if (prefersData) {
       handlePrefersSubmit();
     }
   }, [prefersData]);
+
   useEffect(() => {
     if (habitationData) {
       handleHabitationSubmit();
     }
   }, [habitationData]);
+
   useEffect(() => {
     if (personalLifeData) {
       handlePersonalLifeSubmit();
@@ -208,14 +193,6 @@ const TelegramNavButton = ({
   }, [personalLifeData]);
 
   const handleFinalSubmit = async () => {
-    // const dataToSend = {
-    //   ...registrationData,
-    //   habitation: habitationData || {},
-    //   personalLife: personalLifeData || {},
-    // };
-
-    // console.log("Данные для отправки:", dataToSend);
-
     const requestOptions = {
       method: "POST",
       headers: {
@@ -259,7 +236,6 @@ const TelegramNavButton = ({
         throw new Error("Сеть ответила с ошибкой");
       }
       const result = await response.json();
-      // console.log("Данные успешно отправлены:", result);
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
@@ -284,7 +260,6 @@ const TelegramNavButton = ({
         throw new Error("Сеть ответила с ошибкой");
       }
       const result = await response.json();
-      // console.log("Данные успешно отправлены:", result);
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
@@ -309,7 +284,6 @@ const TelegramNavButton = ({
         throw new Error("Сеть ответила с ошибкой");
       }
       const result = await response.json();
-      // console.log("Данные успешно отправлены:", result);
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
@@ -334,11 +308,48 @@ const TelegramNavButton = ({
         throw new Error("Сеть ответила с ошибкой");
       }
       const result = await response.json();
-      // console.log("Данные успешно отправлены:", result);
     } catch (error) {
       console.error("Ошибка отправки данных:", error);
     }
   };
+
+  useEffect(() => {
+    if (tg) {
+      tg.BackButton.onClick(() => {
+        console.log(" back button ZZZZ clicked");
+
+        switch (location.pathname) {
+          case "/":
+            break;
+          case "/general-info":
+            tg.BackButton.hide();
+            navigate("/");
+            break;
+          case "/education":
+            tg.BackButton.show();
+            navigate("/general-info");
+            break;
+          case "/external-features":
+            tg.BackButton.show();
+            navigate("/education");
+            break;
+          case "/end-of-registration":
+            tg.BackButton.show();
+            navigate("/external-features");
+            break;
+          case "/settings":
+            break;
+          case "/person-life":
+          case "/habitation":
+          case "/family":
+          case "/preferences":
+            tg.BackButton.hide();
+            navigate("/settings");
+            break;
+        }
+      });
+    }
+  }, [location, navigate, tg, openModal, isModalOpen]);
 
   useEffect(() => {
     if (tg) {
@@ -347,6 +358,7 @@ const TelegramNavButton = ({
 
         switch (location.pathname) {
           case "/":
+            tg.BackButton.show();
             navigate("/general-info");
             break;
           case "/general-info":
@@ -361,6 +373,7 @@ const TelegramNavButton = ({
           case "/end-of-registration":
             handleFinalSubmit();
             navigate("/settings");
+            tg.BackButton.hide();
             setIsSettingsLoaded(false);
             break;
           case "/person-life":
@@ -375,8 +388,6 @@ const TelegramNavButton = ({
           case "/preferences":
             handlePrefersSubmit();
             break;
-          default:
-            tg.MainButton.hide();
         }
       });
 

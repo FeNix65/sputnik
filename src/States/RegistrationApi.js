@@ -1,29 +1,10 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useContext } from "react";
 
 const RegistrationApi = createContext();
 
-export const RegistrationApiProvider = ({ children }) => {
-  const [cities, setCities] = useState([]);
-  const [studyPlaces, setStudyPlaces] = useState({});
-  const [professions, setProfessions] = useState([]);
-  const [languages, setLanguages] = useState([]);
-  const [userInfo, setUserInfo] = useState(null);
-
+export const RegistrationApiProvider = ({ children, value }) => {
   return (
-    <RegistrationApi.Provider
-      value={{
-        cities,
-        setCities,
-        studyPlaces,
-        setStudyPlaces,
-        professions,
-        setProfessions,
-        languages,
-        setLanguages,
-        userInfo,
-        setUserInfo,
-      }}
-    >
+    <RegistrationApi.Provider value={value}>
       {children}
     </RegistrationApi.Provider>
   );

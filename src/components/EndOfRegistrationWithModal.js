@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Placeholder, Section, Cell } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
+import "../assets/styles/GeneralStyle.css";
 
 const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -18,11 +19,17 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
     if (tg) {
       tg.MainButton.text = "Сохранить";
       tg.MainButton.show();
+      tg.BackButton.show();
 
       const handleMainButtonClick = () => {
         tg.MainButton.hide();
         closeModal();
       };
+
+      tg.BackButton.onClick(() => {
+        closeModal();
+        tg.BackButton.hide();
+      });
 
       tg.MainButton.onClick(handleMainButtonClick);
 
@@ -40,6 +47,7 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
 
   return (
     <Modal
+      className="Modal"
       header={<Modal.Header>Дополнительная информация</Modal.Header>}
       onClose={closeModal}
       open={isModalOpen}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Select,
   Input,
@@ -7,7 +7,7 @@ import {
   Section,
   List,
 } from "@telegram-apps/telegram-ui";
-
+import "../assets/styles/GeneralStyle.css";
 const Family = ({ onSendData }) => {
   const [status, setStatus] = useState(null);
   const [budgetManagement, setBudgetManagement] = useState(null);
@@ -34,7 +34,7 @@ const Family = ({ onSendData }) => {
     Сводные: "step",
   };
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const data = {
       family: {
         status: statusMap[status] || "",
@@ -44,25 +44,36 @@ const Family = ({ onSendData }) => {
       },
     };
     return data;
-  };
+  }, [status, budgetManagement, siblings, otherInfo]); // зависимости для мемоизации
 
-  const handleSubmit = () => {
-    const data = handleSave();
-    console.log("Отправляемые данные:", data);
-    if (data) {
-      // Сохраняем данные в контексте
-      if (onSendData) onSendData(data);
+  // Пример функции handleSubmit
+  const handleSubmit = useCallback(() => {
+    const mainButton = window.Telegram.WebApp.MainButton;
+    mainButton.disable(); // Отключаем кнопку, чтобы предотвратить повторные клики
+
+    try {
+      const data = handleSave();
+      console.log("Отправляемые данные:", data);
+
+      if (data && onSendData) {
+        onSendData(data); // Сохраняем данные в контексте
+      }
+    } catch (error) {
+      console.error("Ошибка при отправке данных:", error);
+    } finally {
+      mainButton.enable(); // Включаем кнопку в любом случае
     }
-  };
+  }, [handleSave, onSendData]); // зависимости для мемоизации
 
   useEffect(() => {
     const mainButton = window.Telegram.WebApp.MainButton;
 
     mainButton.onClick(handleSubmit);
-    mainButton.show();
+    mainButton.show(); // Показываем кнопку
 
     return () => {
-      mainButton.offClick(handleSubmit);
+      mainButton.offClick(handleSubmit); // Убираем обработчик при размонтировании
+      mainButton.hide(); // Прячем кнопку
     };
   }, [handleSubmit]);
 
@@ -70,6 +81,7 @@ const Family = ({ onSendData }) => {
     <List className="list">
       <Section header="Информация о семье">
         <Select
+          className="Select"
           placeholder="Статус семьи"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -84,6 +96,7 @@ const Family = ({ onSendData }) => {
         </Select>
         <Divider />
         <Select
+          className="Select"
           placeholder="Кто распоряжается бюджетом"
           value={budgetManagement}
           onChange={(e) => setBudgetManagement(e.target.value)}
@@ -97,6 +110,7 @@ const Family = ({ onSendData }) => {
         </Select>
         <Divider />
         <Select
+          className="Select"
           placeholder="Наличие братьев и сестер"
           value={siblings}
           onChange={(e) => setSiblings(e.target.value)}
