@@ -19,7 +19,7 @@ const EndOfRegistrationWithModal = ({ isModalOpen, closeModal }) => {
     if (tg) {
       tg.MainButton.text = "Сохранить";
       tg.MainButton.show();
-      tg.BackButton.show();
+      tg.BackButton.show()
 
       const handleMainButtonClick = () => {
         tg.MainButton.hide();

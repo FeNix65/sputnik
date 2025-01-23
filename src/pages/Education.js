@@ -13,7 +13,7 @@ import config from "../config.js";
 import { useRegistrationData } from "../States/RegistrationData";
 import "../assets/styles/GeneralStyle.css";
 
-const EducationPage = ({ onSubmit }) => {
+const EducationPage = ({ onSubmit, isChanged}) => {
   const { registrationData, setRegistrationData } = useRegistrationData();
   const [expandedAccordion, setExpandedAccordion] = useState(null);
 
@@ -36,6 +36,8 @@ const EducationPage = ({ onSubmit }) => {
   const handleAccordionChange = useCallback((id) => {
     setExpandedAccordion((prev) => (prev === id ? null : id));
   }, []);
+
+  const [isChanged, setIsChanged] = useState(false);
 
   const fetchData = useCallback(
     async (url, setter, mapper = (data) => data) => {
@@ -160,6 +162,7 @@ const EducationPage = ({ onSubmit }) => {
                   onClick={() => {
                     setSelectedProfession(filteredProfession.name);
                     setIsProfessionModalOpen(false);
+                    setIsChanged(true);
                   }}
                 >
                   {filteredProfession.name}
@@ -205,6 +208,7 @@ const EducationPage = ({ onSubmit }) => {
                       onClick={() => {
                         setSelectedStudyPlace(place);
                         setIsStudyPlaceModalOpen(false);
+                        setIsChanged(true);
                       }}
                     >
                       {place}
@@ -223,6 +227,7 @@ const EducationPage = ({ onSubmit }) => {
           onChange={(options) => {
             setSelectedLanguages(options);
             setLanguagesTouched(true);
+            setIsChanged(true);
           }}
           sectionHeader="Выберите из доступных вариантов"
           placeholder="Выберите языки"
@@ -234,7 +239,10 @@ const EducationPage = ({ onSubmit }) => {
         <Input
           placeholder="Специальность, опыт работы в прошлом"
           value={otherInfo}
-          onChange={(e) => setOtherInfo(e.target.value)}
+          onChange={(e) => {
+            setOtherInfo(e.target.value);
+            setIsChanged(true);
+          }}
         />
       </Section>
     </List>

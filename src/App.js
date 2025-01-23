@@ -29,6 +29,8 @@ import config from "./config.js";
 
 function App() {
   const tg = window.Telegram?.WebApp;
+  const [isDataEntered, setIsDataEntered] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -36,6 +38,11 @@ function App() {
   const [personalLifeData, setPersonalLifeData] = useState(null);
   const [familyData, setFamilyData] = useState(null);
   const [prefersData, setPrefersData] = useState(null);
+  const [isChanged, setIsChanged] = useState(false);
+
+  const handleDataChange = (hasData) => {
+    setIsDataEntered(hasData);
+  };
 
   const handlePersonalLifeData = (data) => {
     setPersonalLifeData(data);
@@ -403,7 +410,7 @@ const TelegramNavButton = ({
             break;
           case "/general-info":
           case "/education":
-            tg.MainButton.text = "Продолжить";
+            tg.MainButton.text = isChanged;
             break;
           case "/external-features":
             tg.MainButton.text = "Пропустить";
@@ -419,7 +426,7 @@ const TelegramNavButton = ({
 
       updateButtonText();
     }
-  }, [location, navigate, tg, openModal, isModalOpen]);
+  }, [location, navigate, tg, openModal, isModalOpen,]);
 
   useEffect(() => {
     if (location.pathname === "/settings" && !isModalOpen) {
